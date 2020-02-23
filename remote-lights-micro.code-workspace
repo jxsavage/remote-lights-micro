@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"name": "remote-lights-micro",
+			"path": "."
+		},
+		{
+			"path": "/home/jake/pi-lights"
+		}
+	],
+	"settings": {}
+}
