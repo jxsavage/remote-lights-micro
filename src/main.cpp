@@ -4,14 +4,15 @@
 #include <FastLED.h>
 #include <ArduinoJson.h>
 #include <Colorwaves.h>
+#include <Blendwave.h>
 
 
 // Use qsuba for smooth pixel colouring and qsubd for non-smooth pixel colouring
-#define qsubd(x, b)  ((x>b)?b:0)                              // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
-#define qsuba(x, b)  ((x>b)?x-b:0)                            // Analog Unsigned subtraction macro. if result <0, then => 0
+// #define qsubd(x, b)  ((x>b)?b:0)                              // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
+// #define qsuba(x, b)  ((x>b)?x-b:0)                            // Analog Unsigned subtraction macro. if result <0, then => 0
 
 #define NAME "TEENSY_001"
-#define NUM_LEDS 288
+#define NUM_LEDS 144
 #define DATA_PIN 6
 #define LED_TYPE NEOPIXEL
 #define COLOR_ORDER GRB
@@ -59,26 +60,6 @@ uint8_t gCurrentPaletteNumber = 0;
 CRGBPalette16 gCurrentPalette(CRGB::Black);
 CRGBPalette16 gTargetPalette(gGradientPalettes[0]);
 #define SECONDS_PER_PALETTE 10;
-/*
-* Blendwave
-*/
-CRGB blendwaveClr1;
-CRGB blendwaveClr2;
-uint8_t blendwaveSpeed;
-uint8_t blendwaveLoc1;
-void blendwave() {
-
-  blendwaveSpeed = beatsin8(6,0,255);
-
-  blendwaveClr1 = blend(CHSV(beatsin8(3,0,255),255,255), CHSV(beatsin8(4,0,255),255,255), blendwaveSpeed);
-  blendwaveClr2 = blend(CHSV(beatsin8(4,0,255),255,255), CHSV(beatsin8(3,0,255),255,255), blendwaveSpeed);
-
-  blendwaveLoc1 = beatsin8(10,0,NUM_LEDS-1);
-  
-  fill_gradient_RGB(leds, 0, blendwaveClr2, blendwaveLoc1, blendwaveClr1);
-  fill_gradient_RGB(leds, blendwaveLoc1, blendwaveClr2, NUM_LEDS-1, blendwaveClr1);
-
-}
 /*
 * Command JSON Doc
 */
@@ -222,7 +203,7 @@ void loop () {
 		* Blendwave Effect: value = 1
 		*/
 		case Blendwave:
-			blendwave();
+			blendwave(leds, NUM_LEDS);
 			break;
 	}// end effect loop switch;
 	FastLED.show();
