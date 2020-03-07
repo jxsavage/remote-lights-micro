@@ -8,5 +8,9 @@
 			"path": "/home/jake/pi-lights"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"valarray": "cpp"
+		}
+	}
 }

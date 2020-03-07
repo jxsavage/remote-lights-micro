@@ -1,15 +1,26 @@
 #include <FastLED.h>
+#include <Effect.h>
+#include "Blendwave.h"
 
-void blendwave(CRGB* leds, uint16_t numLEDs) {
+BlendWave::BlendWave(CRGB* LEDs, uint16_t numLEDs, uint16_t offset = 0)
+  : Effect(LEDs, numLEDs, offset) {
+    blendWaveSpeed = beatsin8(6,0,255);
+    blendWaveColor1 = CRGB(blend(CHSV(beatsin8(3,0,255),255,255), CHSV(beatsin8(4,0,255),255,255), blendWaveSpeed));
+    blendWaveColor2 = CRGB(blend(CHSV(beatsin8(4,0,255),255,255), CHSV(beatsin8(3,0,255),255,255), blendWaveSpeed));
+    blendWaveLocation = beatsin8(6,0,255);
+  }
+void BlendWave::render() {
 
-  uint8_t blendwaveSpeed = beatsin8(6,0,255);
+  uint8_t blendWaveSpeed = beatsin8(6,0,255);
 
-  CRGB blendwaveClr1 = blend(CHSV(beatsin8(3,0,255),255,255), CHSV(beatsin8(4,0,255),255,255), blendwaveSpeed);
-  CRGB blendwaveClr2 = blend(CHSV(beatsin8(4,0,255),255,255), CHSV(beatsin8(3,0,255),255,255), blendwaveSpeed);
+  CRGB blendWaveColor1 = blend(CHSV(beatsin8(3,0,255),255,255), CHSV(beatsin8(4,0,255),255,255), blendWaveSpeed);
+  CRGB blendWaveColor2 = blend(CHSV(beatsin8(4,0,255),255,255), CHSV(beatsin8(3,0,255),255,255), blendWaveSpeed);
 
-  uint8_t blendwaveLoc1 = beatsin8(10,0,numLEDs-1);
-  
-  fill_gradient_RGB(leds, 0, blendwaveClr2, blendwaveLoc1, blendwaveClr1);
-  fill_gradient_RGB(leds, blendwaveLoc1, blendwaveClr2, numLEDs-1, blendwaveClr1);
+  uint8_t blendWaveLocation = beatsin8(10,0,numLEDs-1);
+  // CRGB LED = &LEDs[offset];
+  // CRGB* _LED;
+  // _LED = LED;
+  fill_gradient_RGB(&LEDs[offset], 0, blendWaveColor2, blendWaveLocation, blendWaveColor1);
+  fill_gradient_RGB(&LEDs[offset], blendWaveLocation, blendWaveColor2, numLEDs-1, blendWaveColor1);
 
 }
