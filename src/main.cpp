@@ -8,6 +8,7 @@
 #include <LEDSegment.h>
 #include <EffectFactory.h>
 #include <LEDController.h>
+#include <CommandParser.h>
 
 
 // Use qsuba for smooth pixel colouring and qsubd for non-smooth pixel colouring
@@ -33,6 +34,7 @@ const int capacity = JSON_OBJECT_SIZE(3);
 LEDController controller = LEDController(leds, 288);
 LEDSegment SegmentOne = LEDSegment(leds, SEGMENT_ONE_NUM_LEDS, ET_ColorWaves, 0);
 LEDSegment SegmentTwo = LEDSegment(leds, SEGMENT_ONE_NUM_LEDS, ET_BlendWave, 144);
+CommandParser command = CommandParser(&controller);
 void setup() {
 	controller.addSegment(144, ET_BlendWave, 0);
 	controller.addSegment(144, ET_ColorWaves, 144);
@@ -57,7 +59,7 @@ StaticJsonDocument<200> doc;
 /*
 * Command codes sent from controller
 */
-enum Commands {Brightness = 0, CMD_Effect = 1, Info = 2};
+//enum Commands {Brightness = 0, CMD_Effect = 1, Info = 2};
 /*
 * Effect codes sent from controller
 */
@@ -66,14 +68,13 @@ int currentEffect = 0;
 /*
 * Method codes sent from controller
 */
-enum Methods {Get = 0, Set = 1};
+//enum Methods {Get = 0, Set = 1};
 
 
 // Effect* colorwaveEffect = createEffect(ET_ColorWaves, leds, SEGMENT_ONE_NUM_LEDS, 0);
 // Effect* blendwaveEffect = createEffect(ET_BlendWave,leds, SEGMENT_TWO_NUM_LEDS, 0);
 void loop () {
 	String inData;
-	Serial.println("Loop\n");
 	while (Serial.available() > 0) {
 		char recieved = Serial.read();
 		inData += recieved;
@@ -96,11 +97,11 @@ void loop () {
 				/*
 				* Setting Valaue value = 1
 				*/
-				case Set:
+				case MTHD_Set:
 							/*
 							* Setting Brightness: cmd = 0
 							*/
-						if (cmd == Brightness) {
+						if (cmd == CMD_Brightness) {
 							uint8_t brightness = doc["value"];
 							FastLED.setBrightness(brightness);
 						} else if (cmd == CMD_Effect) {
@@ -128,7 +129,7 @@ void loop () {
 				/*
 				* Getting Value: value = 0
 				*/
-				case Get:
+				case MTHD_Get:
 					StaticJsonDocument<200> jsonBuffer;
 					JsonObject root = jsonBuffer.to<JsonObject>();
 					
@@ -136,9 +137,9 @@ void loop () {
 						/*
 						* Getting Brightness
 						*/
-						case Brightness: 
+						case CMD_Brightness: 
 							root["client"] = doc["client"];
-							root["prop"] = Brightness;
+							root["prop"] = CMD_Brightness;
 							root["value"] = FastLED.getBrightness();
 							serializeJson(root, Serial);
 							Serial.print('\n');
@@ -158,7 +159,7 @@ void loop () {
 						/*
 						* Getting Info
 						*/
-						case Info:
+						case CMD_Info:
 							//TODO: figure out why this was returning true when set to Info
 							root["prop"] = 2;
 							root["name"] = NAME;

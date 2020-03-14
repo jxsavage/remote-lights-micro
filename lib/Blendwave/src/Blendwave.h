@@ -11,6 +11,7 @@ class BlendWave: public Effect {
     uint8_t blendWaveLocation;
   public:
 		BlendWave(CRGB* LEDs, uint16_t numLEDs, uint16_t offset);
+    virtual ~BlendWave() = default;
 		void render();
 };
 void blendwave(CRGB*, uint16_t);

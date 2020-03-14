@@ -2,9 +2,6 @@
 #include <ArduinoJson.h>
 #include <FastLED.h>
 
-CommandParser::CommandParser(LEDController controller) {
-  this->controller = controller;
-}
 void CommandParser::parseCommand(String commandStr) {
   DeserializationError error = deserializeJson(command, commandStr);
   if(error) {

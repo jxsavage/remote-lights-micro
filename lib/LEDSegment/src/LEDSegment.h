@@ -18,9 +18,9 @@ class LEDSegment {
       this->reversed = false;
       setEffect(effect);
     }
-    ~LEDSegment() {
-      delete currentEffect;
-    }
+    // ~LEDSegment() {
+    //   delete &currentEffect;
+    // }
     CRGB* getLEDs() {
       return LEDs;
     }
@@ -38,9 +38,9 @@ class LEDSegment {
       }
     }
     void setEffect(EffectType effect) {
-      if(currentEffect) {
-        delete currentEffect;
-      }
+      // if(currentEffect) {
+      //   delete currentEffect;
+      // }
       currentEffect = 
         createEffect(effect, LEDs, numLEDs, offset);
     }

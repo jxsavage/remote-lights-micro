@@ -27,5 +27,4 @@ class Effect
 		virtual void render() = 0;
 
 };
-
 #endif

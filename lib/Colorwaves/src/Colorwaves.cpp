@@ -13,6 +13,7 @@ ColorWaves::ColorWaves(CRGB* LEDs, uint16_t numLEDs, uint16_t offset = 0)
 	currentPalette = CRGBPalette16(CRGB::Black);
 	targetPalette = CRGBPalette16(gGradientPalettes[0]);
 }
+
 void ColorWaves::render()
 {
 	if (newPatternTime) {

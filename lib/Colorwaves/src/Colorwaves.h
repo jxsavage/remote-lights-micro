@@ -17,7 +17,7 @@ class ColorWaves: public Effect
 
 	public:
 		ColorWaves(CRGB* LEDs, uint16_t numLEDs, uint16_t offset);
+		virtual ~ColorWaves() = default;
 		void render();
 };
-
 #endif

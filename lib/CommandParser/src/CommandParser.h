@@ -6,19 +6,20 @@
 /*
 * Command codes sent from controller
 */
-const enum Commands {CMD_Brightness = 0, CMD_Effect = 1, CMD_Info = 2};
+enum Commands {CMD_Brightness = 0, CMD_Effect = 1, CMD_Info = 2};
 /*
 * Method codes sent from controller
 */
-const enum Methods {MTHD_Get = 0, MTHD_Set = 1};
+enum Methods {MTHD_Get = 0, MTHD_Set = 1};
 class CommandParser {
-  static StaticJsonDocument<200> command;
-  static JsonObject response;
-  static LEDController controller;
+  StaticJsonDocument<200> command;
+  JsonObject response;
+  LEDController* controller;
   public:
-    CommandParser(LEDController) {
+    CommandParser(LEDController* controller) {
       StaticJsonDocument<200> responseDoc;
       response = responseDoc.to<JsonObject>();
+        this->controller = controller;
     }
     void parseCommand(String);
     void parseBrightness();
