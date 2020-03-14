@@ -6,6 +6,9 @@
 		},
 		{
 			"path": "/home/jake/pi-lights"
+		},
+		{
+			"path": "/home/jake/remote-lights-web"
 		}
 	],
 	"settings": {

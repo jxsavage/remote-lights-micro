@@ -1,51 +1,56 @@
 #include "CommandParser.h"
 #include <ArduinoJson.h>
 #include <FastLED.h>
-/*
-* Command codes sent from controller
-*/
-const enum Commands {Brightness = 0, Effect = 1, Info = 2};
-/*
-* Effect codes sent from controller
-*/
-const enum Effects { Colorwaves = 0, Blendwave = 1};
-/*
-* Method codes sent from controller
-*/
-const enum Methods {Get = 0, Set = 1};
 
+CommandParser::CommandParser(LEDController controller) {
+  this->controller = controller;
+}
 void CommandParser::parseCommand(String commandStr) {
   DeserializationError error = deserializeJson(command, commandStr);
   if(error) {
-    StaticJsonDocument<200> er;
-    JsonObject err = er.to<JsonObject>();
-    err["error"] = "error deserializeJson() failed.";
-    err["message"] = error.c_str();
-    serializeJson(err, Serial);
-    Serial.print('\n');
+    errorResponse("deserializeJson() Failed.", error.c_str());
+    // response.clear();
+    // response["error"] = "error deserializeJson() failed.";
+    // response["message"] = error.c_str();
+    // serializeJson(response, Serial);
+    // Serial.print('\n');
   } else {
     uint8_t cmd = command["cmd"];
-    if (cmd == Brightness) {
+    if (cmd == CMD_Brightness) {
       parseBrightness();
-    } else if (cmd == Effect) {
+    } else if (cmd == CMD_Effect) {
 
-    } else if (cmd == Info) {
+    } else if (cmd == CMD_Info) {
 
     }
   }
 }
+void CommandParser::errorResponse(const char* error, const char* message) {
+  response.clear();
+  response["error"] = error;
+  response["message"] = message;
+  serializeJson(response, Serial);
+  Serial.print('\n');
+  Serial.flush();
+}
 
 void CommandParser::parseBrightness() {
  uint8_t method = command["method"];
- if (method == Set) {
+ if (method == MTHD_Set) {
    uint8_t brightness = command["value"];
    setBrightness(brightness);
- } else if (method == Get) {
+ } else if (method == MTHD_Get) {
    getBrightness();
  }
 }
 void CommandParser::getBrightness() {
-
+  response.clear();
+  response["client"] = command["client"];
+  response["prop"] = CMD_Brightness;
+  response["value"] = FastLED.getBrightness();
+  serializeJson(response, Serial);
+  Serial.print('\n');
+  Serial.flush();
 }
 void CommandParser::setBrightness(uint8_t brightness) {
   FastLED.setBrightness(brightness);

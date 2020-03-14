@@ -14,6 +14,7 @@ class Effect
 			setNumLEDs(numLEDs);
 			setOffset(offset);
 		}
+		virtual ~Effect() = default;
 		void setLEDs(CRGB* LEDs) {
 			this->LEDs = LEDs;
 		}

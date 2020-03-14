@@ -73,6 +73,7 @@ enum Methods {Get = 0, Set = 1};
 // Effect* blendwaveEffect = createEffect(ET_BlendWave,leds, SEGMENT_TWO_NUM_LEDS, 0);
 void loop () {
 	String inData;
+	Serial.println("Loop\n");
 	while (Serial.available() > 0) {
 		char recieved = Serial.read();
 		inData += recieved;
