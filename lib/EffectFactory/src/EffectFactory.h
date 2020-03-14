@@ -4,8 +4,8 @@
 #include <Effect.h>
 #include <Colorwaves.h>
 #include <Blendwave.h>
-typedef enum {ET_ColorWaves, ET_BlendWave} EffectType;
-Effect* createEffect(
+
+inline Effect* createEffect(
 			EffectType effect, CRGB* LEDs, uint16_t numLEDs, uint16_t offset){
 			if(effect == ET_ColorWaves){
 				return new ColorWaves(LEDs, numLEDs, offset);

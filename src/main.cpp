@@ -71,14 +71,13 @@ int currentEffect = 0;
 //enum Methods {Get = 0, Set = 1};
 
 
-// Effect* colorwaveEffect = createEffect(ET_ColorWaves, leds, SEGMENT_ONE_NUM_LEDS, 0);
-// Effect* blendwaveEffect = createEffect(ET_BlendWave,leds, SEGMENT_TWO_NUM_LEDS, 0);
 void loop () {
 	String inData;
 	while (Serial.available() > 0) {
 		char recieved = Serial.read();
 		inData += recieved;
 		if (recieved == '\n') {
+			command.parseCommand(inData);
 			DeserializationError error = deserializeJson(doc, inData);
 			if (error) {
 				StaticJsonDocument<200> er;
@@ -102,8 +101,8 @@ void loop () {
 							* Setting Brightness: cmd = 0
 							*/
 						if (cmd == CMD_Brightness) {
-							uint8_t brightness = doc["value"];
-							FastLED.setBrightness(brightness);
+							// uint8_t brightness = doc["value"];
+							// FastLED.setBrightness(brightness);
 						} else if (cmd == CMD_Effect) {
 							/*
 							* Setting Effect: cmd = 1
@@ -134,20 +133,15 @@ void loop () {
 					JsonObject root = jsonBuffer.to<JsonObject>();
 					
 					switch(cmd) {
-						/*
-						* Getting Brightness
-						*/
 						case CMD_Brightness: 
-							root["client"] = doc["client"];
-							root["prop"] = CMD_Brightness;
-							root["value"] = FastLED.getBrightness();
-							serializeJson(root, Serial);
-							Serial.print('\n');
-							Serial.flush();
+							// root["client"] = doc["client"];
+							// root["prop"] = CMD_Brightness;
+							// root["value"] = FastLED.getBrightness();
+							// serializeJson(root, Serial);
+							// Serial.print('\n');
+							// Serial.flush();
 							break;
-						/*
-						* Getting Effect
-						*/
+
 						case CMD_Effect:
 							root["client"] = doc["client"];
 							root["prop"] = CMD_Effect;
@@ -156,24 +150,22 @@ void loop () {
 							Serial.print('\n');
 							Serial.flush();
 							break;
-						/*
-						* Getting Info
-						*/
+
 						case CMD_Info:
 							//TODO: figure out why this was returning true when set to Info
-							root["prop"] = 2;
-							root["name"] = NAME;
-							root["numLEDs"] = SEGMENT_ONE_NUM_LEDS;
-							root["brightness"] = FastLED.getBrightness();
-							root["effect"] = currentEffect;
-							serializeJson(root, Serial);
-							Serial.print('\n');
-							Serial.flush();
+							// root["prop"] = 2;
+							// root["name"] = NAME;
+							// root["numLEDs"] = SEGMENT_ONE_NUM_LEDS;
+							// root["brightness"] = FastLED.getBrightness();
+							// root["effect"] = currentEffect;
+							// serializeJson(root, Serial);
+							// Serial.print('\n');
+							// Serial.flush();
 							break;
 					}//end get command switch
 					break;
 				default:
-					Serial.println('default cmd');
+					Serial.println("default cmd");
 					break;
 			}//end method switch
 		}
@@ -184,10 +176,6 @@ void loop () {
 		* Colorwaves Effect: value = 0
 		*/
 		case Colorwaves:
-			// colorwaveEffect->render();
-			// blendwaveEffect->render();
-			// SegmentOne.renderEffect();
-			// SegmentTwo.renderEffect();
 			controller.renderEffects();
 			break;
 		/*
@@ -195,10 +183,6 @@ void loop () {
 		*/
 		case Blendwave:
 		  controller.renderEffects();
-			// blendwaveEffect->render();
-			// colorwaveEffect->render();
-			// SegmentOne.renderEffect();
-			// SegmentTwo.renderEffect();
 			break;
 	}// end effect loop switch;
 	FastLED.show();

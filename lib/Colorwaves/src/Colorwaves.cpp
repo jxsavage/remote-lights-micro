@@ -1,11 +1,12 @@
 #include "Colorwaves.h"
 #include <FastLED.h>
+#include <Effect.h>
 extern const TProgmemRGBGradientPalettePtr gGradientPalettes[];
 extern const uint8_t gGradientPaletteCount;
 //#include <valarray> // std::valarray, std::slice 
 
 ColorWaves::ColorWaves(CRGB* LEDs, uint16_t numLEDs, uint16_t offset = 0)
-	: Effect(LEDs, numLEDs, offset)
+	: Effect(LEDs, numLEDs, ET_ColorWaves, offset)
 {
 	currentPaletteNumber = 0;
 	newPatternTime = CEveryNSeconds(10);

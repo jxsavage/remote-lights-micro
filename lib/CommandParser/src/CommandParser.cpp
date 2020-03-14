@@ -1,16 +1,12 @@
 #include "CommandParser.h"
 #include <ArduinoJson.h>
 #include <FastLED.h>
+#include <vector>
 
 void CommandParser::parseCommand(String commandStr) {
   DeserializationError error = deserializeJson(command, commandStr);
   if(error) {
     errorResponse("deserializeJson() Failed.", error.c_str());
-    // response.clear();
-    // response["error"] = "error deserializeJson() failed.";
-    // response["message"] = error.c_str();
-    // serializeJson(response, Serial);
-    // Serial.print('\n');
   } else {
     uint8_t cmd = command["cmd"];
     if (cmd == CMD_Brightness) {
@@ -18,7 +14,7 @@ void CommandParser::parseCommand(String commandStr) {
     } else if (cmd == CMD_Effect) {
 
     } else if (cmd == CMD_Info) {
-
+      parseInfo();
     }
   }
 }
@@ -41,7 +37,7 @@ void CommandParser::parseBrightness() {
  }
 }
 void CommandParser::getBrightness() {
-  response.clear();
+  //response.clear();
   response["client"] = command["client"];
   response["prop"] = CMD_Brightness;
   response["value"] = FastLED.getBrightness();
@@ -53,8 +49,40 @@ void CommandParser::setBrightness(uint8_t brightness) {
   FastLED.setBrightness(brightness);
 }
 void CommandParser::parseEffect() {
-  uint8_t method = command["method"];
+  // uint8_t method = command["method"];
 }
 void CommandParser::parseInfo() {
   uint8_t method = command["method"];
+  if (method == MTHD_Set) {
+    setInfo();
+  } else if (method == MTHD_Get) {
+    getInfo();
+  }
+}
+void CommandParser::getInfo() {
+  response["prop"] = (int)CMD_Info;
+  response["numLEDs"] = controller->getTotalLEDs();
+  response["brightness"] = FastLED.getBrightness();
+  response["segments"] = getSegments();
+  serializeJson(response, Serial);
+  Serial.print('\n');
+  Serial.flush();
+}
+ void CommandParser::setInfo() {
+
+}
+JsonArray CommandParser::getSegments() {
+  StaticJsonDocument<400> segmentsDoc;
+  JsonArray segmentsArr = segmentsDoc.to<JsonArray>();
+  vector<LEDSegment>* segments = controller->getSegments();
+  vector<LEDSegment>::iterator seg;
+  for (seg = segments->begin(); seg != segments->end(); seg++){
+    StaticJsonDocument<200> segmentDoc;
+    JsonObject segment = segmentDoc.to<JsonObject>();
+    segment["numLEDs"] = seg->getNumLEDs();
+    segment["offset"] = seg->getOffset();
+    segment["effect"] = (int)seg->getEffect();
+    segmentsArr.add(segment);
+  }
+  return segmentsArr;
 }

@@ -27,6 +27,9 @@ class LEDSegment {
     void setOffset(uint16_t offset) {
       this->offset = offset;
     }
+    uint16_t getOffset() {
+      return offset;
+    }
     boolean isReversed() {
       return reversed ? false : true;
     }
@@ -46,6 +49,12 @@ class LEDSegment {
     }
     void renderEffect() {
       currentEffect->render();
+    }
+    uint16_t getNumLEDs() {
+      return numLEDs;
+    }
+    EffectType getEffect() {
+      return currentEffect->getEffect();
     }
 };
 #endif

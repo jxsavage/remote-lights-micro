@@ -33,6 +33,12 @@ class LEDController {
         seg->renderEffect();
       }
     }
+    vector<LEDSegment>* getSegments() {
+      return &segments;
+    }
+    uint16_t getTotalLEDs() {
+      return totalLEDs;
+    }
 
 };
 #endif
