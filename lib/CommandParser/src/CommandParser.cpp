@@ -86,3 +86,6 @@ JsonArray CommandParser::getSegments() {
   }
   return segmentsArr;
 }
+void CommandParser::setEffect(EffectType effectType, uint8_t segmentNum) {
+  controller->setSegmentEffect(effectType, segmentNum);
+}

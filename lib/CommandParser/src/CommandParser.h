@@ -28,7 +28,7 @@ class CommandParser {
     void setBrightness(uint8_t);
     void parseEffect();
     void getEffect();
-    void setEffect(EffectType);
+    void setEffect(EffectType, uint8_t);
     void parseInfo();
     void getInfo();
     void setInfo();

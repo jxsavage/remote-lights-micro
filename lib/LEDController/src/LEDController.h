@@ -39,6 +39,9 @@ class LEDController {
     uint16_t getTotalLEDs() {
       return totalLEDs;
     }
+    void setSegmentEffect(EffectType effectType, uint8_t segmentNum) {
+      segments[segmentNum].setEffect(effectType);
+    }
 
 };
 #endif
