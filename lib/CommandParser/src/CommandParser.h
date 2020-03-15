@@ -29,7 +29,7 @@ class CommandParser {
     void parseEffect();
     void getEffect();
     void setEffect(EffectType, uint8_t);
-    void parseInfo();
+    void parseInfo(JsonDocument&);
     void getInfo();
     void setInfo();
     JsonArray getSegments();

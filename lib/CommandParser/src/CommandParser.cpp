@@ -4,6 +4,7 @@
 #include <vector>
 
 void CommandParser::parseCommand(String commandStr) {
+  StaticJsonDocument<200> command;
   DeserializationError error = deserializeJson(command, commandStr);
   if(error) {
     errorResponse("deserializeJson() Failed.", error.c_str());
@@ -14,12 +15,12 @@ void CommandParser::parseCommand(String commandStr) {
     } else if (cmd == CMD_Effect) {
 
     } else if (cmd == CMD_Info) {
-      parseInfo();
+      parseInfo(command);
     }
   }
 }
 void CommandParser::errorResponse(const char* error, const char* message) {
-  response.clear();
+  //response.clear();
   response["error"] = error;
   response["message"] = message;
   serializeJson(response, Serial);
@@ -51,7 +52,7 @@ void CommandParser::setBrightness(uint8_t brightness) {
 void CommandParser::parseEffect() {
   // uint8_t method = command["method"];
 }
-void CommandParser::parseInfo() {
+void CommandParser::parseInfo(JsonDocument& command) {
   uint8_t method = command["method"];
   if (method == MTHD_Set) {
     setInfo();
@@ -60,6 +61,8 @@ void CommandParser::parseInfo() {
   }
 }
 void CommandParser::getInfo() {
+  StaticJsonDocument<400> responseDoc;
+  JsonObject response = responseDoc.to<JsonObject>();
   response["prop"] = (int)CMD_Info;
   response["numLEDs"] = controller->getTotalLEDs();
   response["brightness"] = FastLED.getBrightness();
