@@ -11,7 +11,7 @@ void CommandParser::parseCommand(String commandStr) {
   } else {
     uint8_t cmd = command["cmd"];
     if (cmd == CMD_Brightness) {
-      parseBrightness();
+      parseBrightness(command);
     } else if (cmd == CMD_Effect) {
 
     } else if (cmd == CMD_Info) {
@@ -28,17 +28,18 @@ void CommandParser::errorResponse(const char* error, const char* message) {
   Serial.flush();
 }
 
-void CommandParser::parseBrightness() {
+void CommandParser::parseBrightness(JsonDocument& command) {
  uint8_t method = command["method"];
  if (method == MTHD_Set) {
    uint8_t brightness = command["value"];
    setBrightness(brightness);
  } else if (method == MTHD_Get) {
-   getBrightness();
+   getBrightness(command);
  }
 }
-void CommandParser::getBrightness() {
-  //response.clear();
+void CommandParser::getBrightness(JsonDocument& command) {
+  StaticJsonDocument<200> responseDoc;
+  JsonObject response = responseDoc.to<JsonObject>();
   response["client"] = command["client"];
   response["prop"] = CMD_Brightness;
   response["value"] = FastLED.getBrightness();
