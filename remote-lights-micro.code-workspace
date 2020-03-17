@@ -5,10 +5,10 @@
 			"path": "."
 		},
 		{
-			"path": "/home/jake/pi-lights"
+			"path": "/home/jake/remote-lights-web"
 		},
 		{
-			"path": "/home/jake/remote-lights-web"
+			"path": "/home/jake/remote-lights-pi"
 		}
 	],
 	"settings": {
