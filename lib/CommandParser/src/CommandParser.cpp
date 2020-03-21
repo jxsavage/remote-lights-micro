@@ -4,7 +4,7 @@
 #include <vector>
 
 void CommandParser::parseCommand(String commandStr) {
-  StaticJsonDocument<200> command;
+  StaticJsonDocument<400> command;
   DeserializationError error = deserializeJson(command, commandStr);
   if(error) {
     errorResponse("deserializeJson() Failed.", error.c_str());
@@ -12,22 +12,38 @@ void CommandParser::parseCommand(String commandStr) {
     uint8_t cmd = command["cmd"];
     if (cmd == CMD_Brightness) {
       parseBrightness(command);
-    } else if (cmd == CMD_Effect) {
-
+    } else if (cmd == CMD_Segment) {
+      parseSegment(command);
     } else if (cmd == CMD_Info) {
       parseInfo(command);
     }
   }
 }
 void CommandParser::errorResponse(const char* error, const char* message) {
-  //response.clear();
+  StaticJsonDocument<200> responseDoc;
+  JsonObject response = responseDoc.to<JsonObject>();
   response["error"] = error;
   response["message"] = message;
   serializeJson(response, Serial);
   Serial.print('\n');
   Serial.flush();
 }
-
+void CommandParser::parseSegment(JsonDocument& command) {
+  uint8_t method = command["method"];
+  if (method == MTHD_Set) {
+    setSegmentProp(command);
+  } else if (method == MTHD_Get) {
+  }
+}
+void CommandParser::setSegmentProp(JsonDocument& command) {
+  uint8_t prop = command["prop"];
+  if (prop == SCMD_Effect) {
+    uint8_t segment = command["segment"];
+    uint8_t effectType = command["value"];
+    EffectType effect = static_cast<EffectType>(effectType);
+    setSegmentEffect(effect, segment);
+  }
+}
 void CommandParser::parseBrightness(JsonDocument& command) {
  uint8_t method = command["method"];
  if (method == MTHD_Set) {
@@ -65,14 +81,14 @@ void CommandParser::getInfo() {
   StaticJsonDocument<400> responseDoc;
   JsonObject response = responseDoc.to<JsonObject>();
   response["prop"] = (int)CMD_Info;
-  response["numLEDs"] = controller->getTotalLEDs();
+  response["totalLEDs"] = controller->getTotalLEDs();
   response["brightness"] = FastLED.getBrightness();
   response["segments"] = getSegments();
   serializeJson(response, Serial);
   Serial.print('\n');
   Serial.flush();
 }
- void CommandParser::setInfo() {
+void CommandParser::setInfo() {
 
 }
 JsonArray CommandParser::getSegments() {
@@ -90,6 +106,6 @@ JsonArray CommandParser::getSegments() {
   }
   return segmentsArr;
 }
-void CommandParser::setEffect(EffectType effectType, uint8_t segmentNum) {
+void CommandParser::setSegmentEffect(EffectType effectType, uint8_t segmentNum) {
   controller->setSegmentEffect(effectType, segmentNum);
 }

@@ -4,11 +4,13 @@
 #include <EffectFactory.h>
 #include <LEDController.h>
 #include <vector>
+typedef uint8_t segmentNum;
 /*
 * Command codes sent from controller
 */
-enum Commands {CMD_Brightness = 0, CMD_Effect = 1,
-  CMD_Info = 2, CMD_Segments = 3};
+enum Commands {CMD_Brightness = 0, CMD_Segment = 1,
+  CMD_Info = 2};
+enum SegmentCommands {SCMD_Effect};
 /*
 * Method codes sent from controller
 */
@@ -23,9 +25,11 @@ class CommandParser {
     void parseBrightness(JsonDocument&  command);
     void getBrightness(JsonDocument& command);
     void setBrightness(uint8_t brightness);
+    void parseSegment(JsonDocument& command);
+    void setSegmentProp(JsonDocument& command);
+    void setSegmentEffect(EffectType, segmentNum);
     void parseEffect();
     void getEffect();
-    void setEffect(EffectType, uint8_t);
     void parseInfo(JsonDocument&);
     void getInfo();
     void setInfo();
