@@ -8,13 +8,13 @@ typedef uint8_t segmentNum;
 /*
 * Command codes sent from controller
 */
-enum Commands {CMD_Brightness = 0, CMD_Segment = 1,
-  CMD_Info = 2};
-enum SegmentCommands {SCMD_Effect};
+enum Commands {
+  GET_INFO = 1, RESET_MICRO, SPLIT_SEGMENT,
+  SET_BRIGHTNESS, MERGE_SEGMENTS, SET_SEGMENT_EFFECT,
+  RESIZE_SEGMENTS_FROM_BOUNDARIES};
 /*
 * Method codes sent from controller
 */
-enum Methods {MTHD_Get = 0, MTHD_Set = 1};
 class CommandParser {
   LEDController* controller;
   public:
