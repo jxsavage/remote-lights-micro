@@ -1,14 +1,16 @@
 #ifndef LED_SEGMENT_H
 #define LED_SEGMENT_H
+#include <logger.h>
 #include <FastLED.h>
 #include <Effect.h>
 #include <EffectFactory.h>
+#include <memory>
 class LEDSegment {
   CRGB* LEDs;
   uint16_t offset;
   uint16_t numLEDs;
   boolean reversed;
-  Effect* currentEffect;
+  std::unique_ptr<Effect> currentEffect;
   public:
     uint16_t segmentLength;
     LEDSegment(CRGB* LEDs, uint16_t totalLEDs, EffectType effect, uint16_t offset) {
@@ -18,9 +20,6 @@ class LEDSegment {
       this->reversed = false;
       setEffect(effect);
     }
-    // ~LEDSegment() {
-    //   delete &currentEffect;
-    // }
     CRGB* getLEDs() {
       return LEDs;
     }
@@ -41,11 +40,11 @@ class LEDSegment {
       }
     }
     void setEffect(EffectType effect) {
-      // if(currentEffect) {
-      //   delete currentEffect;
-      // }
-      currentEffect = 
-        createEffect(effect, LEDs, numLEDs, offset);
+      if(effect == ET_ColorWaves){
+				currentEffect = std::unique_ptr<Effect>(new ColorWaves(LEDs, numLEDs, offset));
+			} else if (effect == ET_BlendWave) {
+        currentEffect = std::unique_ptr<Effect>(new BlendWave(LEDs, numLEDs, offset));
+      }
     }
     void renderEffect() {
       currentEffect->render();

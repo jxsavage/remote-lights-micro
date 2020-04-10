@@ -2,25 +2,25 @@
 #include <ArduinoJson.h>
 #include <FastLED.h>
 #include <vector>
-
+#define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
 void CommandParser::parseCommand(String commandStr) {
   StaticJsonDocument<400> command;
-  JsonArray segmentsArr = command.to<JsonArray>();
   DeserializationError error = deserializeJson(command, commandStr);
   if(error) {
     errorResponse("deserializeJson() Failed.", error.c_str());
   } else {
     uint8_t cmd = command[0];
-    if (cmd == GET_INFO) {
-      getInfo();
+    if (cmd == GET_STATE) {
+      getState();
     } else if (cmd == RESET_MICRO) {
     } else if (cmd == SPLIT_SEGMENT) {
     } else if (cmd == SET_BRIGHTNESS) {
       setBrightness(command[1]);
     } else if (cmd == MERGE_SEGMENTS) {
-      
     } else if (cmd == SET_SEGMENT_EFFECT) {
-      
+      uint8_t effect = command[1];
+      uint8_t segmentIndex = command[2];
+      setSegmentEffect(static_cast<EffectType>(effect), segmentIndex);
     } else if (cmd == RESIZE_SEGMENTS_FROM_BOUNDARIES) {
       
     }
@@ -28,9 +28,10 @@ void CommandParser::parseCommand(String commandStr) {
 }
 void CommandParser::errorResponse(const char* error, const char* message) {
   StaticJsonDocument<200> responseDoc;
-  JsonObject response = responseDoc.to<JsonObject>();
-  response["error"] = error;
-  response["message"] = message;
+  JsonArray response = responseDoc.to<JsonArray>();
+  response.add(100);
+  response.add(error);
+  response.add(message);
   serializeJson(response, Serial);
   Serial.print('\n');
   Serial.flush();
@@ -38,10 +39,10 @@ void CommandParser::errorResponse(const char* error, const char* message) {
 void CommandParser::setBrightness(uint8_t brightness) {
   FastLED.setBrightness(brightness);
 }
-void CommandParser::getInfo() {
+void CommandParser::getState() {
   StaticJsonDocument<JSON_ARRAY_SIZE(36)> responseDoc;
   JsonArray response = responseDoc.to<JsonArray>();
-  response.add((int)GET_INFO);
+  response.add((int)GET_STATE);
   response.add(controller->getTotalLEDs());
   response.add(FastLED.getBrightness());
   response.add(getSegments());
@@ -49,7 +50,7 @@ void CommandParser::getInfo() {
   Serial.print('\n');
   Serial.flush();
 }
-void CommandParser::setInfo() {
+void CommandParser::setState() {
 
 }
 JsonArray CommandParser::getSegments() {
@@ -59,15 +60,13 @@ JsonArray CommandParser::getSegments() {
   
   vector<LEDSegment>::iterator seg;
   for (seg = segments->begin(); seg != segments->end(); seg++){
-    StaticJsonDocument<JSON_ARRAY_SIZE(3)> segmentDoc;
-    JsonArray segment = segmentDoc.to<JsonArray>();
-    segment.add(seg->getOffset());
-    segment.add(seg->getNumLEDs());
+    JsonArray segment = segmentsArr.createNestedArray();
+    segment.add((int)seg->getOffset());
+    segment.add((int)seg->getNumLEDs());
     segment.add((int)seg->getEffect());
-    segmentsArr.add(segment);
   }
   return segmentsArr;
 }
-void CommandParser::setSegmentEffect(EffectType effectType, uint8_t segmentNum) {
-  controller->setSegmentEffect(effectType, segmentNum);
+void CommandParser::setSegmentEffect(EffectType effectType, uint8_t segmentIndex) {
+  controller->setSegmentEffect(effectType, segmentIndex);
 }

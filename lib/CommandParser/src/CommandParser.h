@@ -4,12 +4,12 @@
 #include <EffectFactory.h>
 #include <LEDController.h>
 #include <vector>
-typedef uint8_t segmentNum;
+typedef uint8_t segmentIndex;
 /*
 * Command codes sent from controller
 */
 enum Commands {
-  GET_INFO = 1, RESET_MICRO, SPLIT_SEGMENT,
+  GET_STATE = 1, RESET_MICRO, SPLIT_SEGMENT,
   SET_BRIGHTNESS, MERGE_SEGMENTS, SET_SEGMENT_EFFECT,
   RESIZE_SEGMENTS_FROM_BOUNDARIES};
 /*
@@ -22,17 +22,10 @@ class CommandParser {
       this->controller = controller;
     }
     void parseCommand(String serialCommand);
-    void parseBrightness(JsonDocument&  command);
-    void getBrightness(JsonDocument& command);
     void setBrightness(uint8_t brightness);
-    void parseSegment(JsonDocument& command);
-    void setSegmentProp(JsonDocument& command);
-    void setSegmentEffect(EffectType, segmentNum);
-    void parseEffect();
-    void getEffect();
-    void parseInfo(JsonDocument&);
-    void getInfo();
-    void setInfo();
+    void setSegmentEffect(EffectType, segmentIndex);
+    void getState();
+    void setState();
     JsonArray getSegments();
     void errorResponse(const char*, const char*);
 };
