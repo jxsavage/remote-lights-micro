@@ -23,13 +23,13 @@
 #define COLOR_ORDER GRB
 #define DATA_RATE 2
 #include <EffectFactory.h>
+#include <EEPROMSettings.h>
 uint8_t max_bright = 15; // Overall brightness definition. It can be changed on the fly.
 CRGB leds[288];					 // Initialize our LED array.
-
+EEPROMSettings settings = EEPROMSettings();
 LEDController controller = LEDController(leds, 288);
-LEDSegment SegmentOne = LEDSegment(leds, SEGMENT_ONE_NUM_LEDS, ET_ColorWaves, 0);
-LEDSegment SegmentTwo = LEDSegment(leds, SEGMENT_ONE_NUM_LEDS, ET_BlendWave, 144);
 CommandParser command = CommandParser(&controller);
+
 void setup()
 {
 	controller.addSegment(144, ET_BlendWave, 0);
@@ -40,7 +40,6 @@ void setup()
 
 	FastLED.addLeds<APA102, 7, 14, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144).setCorrection(TypicalSMD5050);
 	FastLED.addLeds<APA102, 21, 20, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144, 144).setCorrection(TypicalSMD5050);
-
 	FastLED.setBrightness(max_bright);
 
 	//set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA.

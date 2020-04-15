@@ -10,15 +10,20 @@ class LEDSegment {
   uint16_t offset;
   uint16_t numLEDs;
   boolean reversed;
+  uint32_t segmentId;
   std::unique_ptr<Effect> currentEffect;
   public:
     uint16_t segmentLength;
-    LEDSegment(CRGB* LEDs, uint16_t totalLEDs, EffectType effect, uint16_t offset) {
+    LEDSegment(CRGB* LEDs, uint16_t totalLEDs, EffectType effect, uint16_t offset, uint32_t segmentId) {
       this->LEDs = LEDs;
-      this->numLEDs = totalLEDs;
       this->offset = offset;
       this->reversed = false;
+      this->numLEDs = totalLEDs;
+      this->segmentId = segmentId;
       setEffect(effect);
+    }
+    uint32_t getId() {
+      return segmentId;
     }
     CRGB* getLEDs() {
       return LEDs;

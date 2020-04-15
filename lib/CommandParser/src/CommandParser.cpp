@@ -61,9 +61,10 @@ JsonArray CommandParser::getSegments() {
   vector<LEDSegment>::iterator seg;
   for (seg = segments->begin(); seg != segments->end(); seg++){
     JsonArray segment = segmentsArr.createNestedArray();
-    segment.add((int)seg->getOffset());
-    segment.add((int)seg->getNumLEDs());
+    segment.add(seg->getOffset());
+    segment.add(seg->getNumLEDs());
     segment.add((int)seg->getEffect());
+    segment.add(seg->getId());
   }
   return segmentsArr;
 }
