@@ -19,6 +19,7 @@ class CommandParser {
   LEDController* controller;
   EEPROMSettings* settings;
   public:
+    CommandParser() = default;
     CommandParser(LEDController* controller, EEPROMSettings* settings) {
       this->controller = controller;
       this-> settings = settings;

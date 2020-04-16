@@ -1,42 +1,46 @@
 #ifndef EEPROM_SETTINGS
 #define EEPROM_SETTINGS
-#include <logger.h>
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
-typedef uint8_t stripPins[2];
 struct FastLEDStripSettings
 {
   uint16_t offset;
   uint16_t numLEDs;
+};
+struct RemoteLightsSegmentSettings
+{
+  uint32_t id;
+  uint16_t offset;
+  uint16_t numLEDs;
   EffectType effect;
 };
-// FastLEDStripSettings defaultStrip1 = {
-//     .offset = 0,
-//     .numLEDs = 144,
-//     .effect = ET_BlendWave,
-// };
-// FastLEDStripSettings defaultStrip2 = {
-//     .offset = 144,
-//     .numLEDs = 144,
-//     .effect = ET_ColorWaves,
-// };
 struct Settings
 {
   char microId[12];
   uint16_t totalLEDs;
   uint8_t defaultBrightness;
+  uint8_t numStrips;
   FastLEDStripSettings strips[2];
+  uint8_t numSegments;
+  RemoteLightsSegmentSettings segments[10];
 };
 
 class EEPROMSettings
 {
 public:
   EEPROMSettings();
-  void writeDefault();
   void clearEEPROM();
+  void writeDefault();
+  const Settings getSettings();
+  const uint16_t getTotalLEDs();
+  const uint8_t getDefaultBrightness();
   const boolean areSettingsLoaded();
-  Settings const getSettings();
+  const uint8_t getNumStrips();
+  const FastLEDStripSettings getStrip(uint8_t stripIndex);
+  const uint8_t getNumSegments();
+  const RemoteLightsSegmentSettings getSegment(uint8_t segmentIndex);
+  
 
 private:
   Settings settings;

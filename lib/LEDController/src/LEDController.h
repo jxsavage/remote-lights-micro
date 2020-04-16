@@ -11,32 +11,20 @@ using namespace std;
 class LEDController {
   CRGB* allLEDs;
   uint16_t totalLEDs;
-  CLEDController* FastLEDControllers;
   vector<LEDSegment> segments;
   public:
-    LEDController(EEPROMSettings* settings) {
-      const Settings microSettings = settings->getSettings();
-      CRGB leds[microSettings.totalLEDs];
+    LEDController() = default;
+    LEDController(EEPROMSettings* settings, CRGB* leds) {
       this->allLEDs = leds;
-      this->totalLEDs = settings->getSettings().totalLEDs;
-      const FastLEDStripSettings* stripSettings = microSettings.strips;
-      for(int i = 0; i <= 1; i++) {
-        const uint16_t offset = stripSettings[i].offset;
-        const uint16_t numLEDs = stripSettings[i].numLEDs;
-        const EffectType effect = stripSettings[i].effect;
-        REMOTE_LOG(99, "iteration", i, "offset", offset, "numLEDs", numLEDs, "effect", (int)effect);
-        switch(i) {
-          case 0:
-            FastLED.addLeds<APA102, 7, 14, GRB, DATA_RATE_MHZ(2)>(leds, numLEDs).setCorrection(TypicalSMD5050);
-            break;
-          case 1:
-            FastLED.addLeds<APA102, 21, 20, GRB, DATA_RATE_MHZ(2)>(leds, offset, numLEDs).setCorrection(TypicalSMD5050);
-            break;
-        }
+      this->totalLEDs = settings->getTotalLEDs();
+      FastLED.setBrightness(settings->getDefaultBrightness());
+      for(int i = 0; i < settings->getNumSegments(); i++) {
+        const RemoteLightsSegmentSettings segment = settings->getSegment(i);
+        uint16_t offset = segment.offset;
+        uint16_t numLEDs = segment.numLEDs;
+        EffectType effect = segment.effect;
         addSegment(numLEDs, effect, offset);
-        FastLED.setBrightness(microSettings.defaultBrightness);
       };
-      randomSeed(analogRead(0));
     }
     void addSegment(uint16_t numLEDs, EffectType effectType, uint16_t offset, uint32_t id = 0) {
       uint32_t segmentId;
