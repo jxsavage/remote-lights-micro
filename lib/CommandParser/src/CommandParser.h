@@ -17,9 +17,11 @@ enum Commands {
 */
 class CommandParser {
   LEDController* controller;
+  EEPROMSettings* settings;
   public:
-    CommandParser(LEDController* controller) {
+    CommandParser(LEDController* controller, EEPROMSettings* settings) {
       this->controller = controller;
+      this-> settings = settings;
     }
     void parseCommand(String serialCommand);
     void setBrightness(uint8_t brightness);
