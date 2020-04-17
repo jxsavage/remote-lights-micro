@@ -30,6 +30,7 @@ class LEDSegment {
     }
     void setOffset(uint16_t offset) {
       this->offset = offset;
+      currentEffect->setOffset(offset);
     }
     uint16_t getOffset() {
       return offset;
@@ -56,6 +57,10 @@ class LEDSegment {
     }
     uint16_t getNumLEDs() {
       return numLEDs;
+    }
+    void setNumLEDs(uint16_t numLEDs) {
+      this->numLEDs = numLEDs;
+      currentEffect->setNumLEDs(numLEDs);
     }
     EffectType getEffect() {
       return currentEffect->getEffect();

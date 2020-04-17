@@ -3,7 +3,6 @@
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
-#include <string>
 char* generateMicroId() {
     static char id[12];
     static const char alphanum[] =

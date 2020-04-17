@@ -14,17 +14,34 @@ void CommandParser::parseCommand(String commandStr) {
       getState();
     } else if (cmd == RESET_MICRO) {
     } else if (cmd == SPLIT_SEGMENT) {
+      uint8_t effect = command[1];
+      uint8_t direction = command[2];
+      uint8_t segmentIndex = command[3];
+      splitSegment(static_cast<EffectType>(effect), static_cast<Direction>(direction), segmentIndex);
     } else if (cmd == SET_BRIGHTNESS) {
       setBrightness(command[1]);
     } else if (cmd == MERGE_SEGMENTS) {
+      uint8_t direction = command[1];
+      uint8_t segmentIndex = command[2];
+      mergeSegments(static_cast<Direction>(direction), segmentIndex);
     } else if (cmd == SET_SEGMENT_EFFECT) {
       uint8_t effect = command[1];
       uint8_t segmentIndex = command[2];
       setSegmentEffect(static_cast<EffectType>(effect), segmentIndex);
     } else if (cmd == RESIZE_SEGMENTS_FROM_BOUNDARIES) {
-      
+      JsonArray boundaries = command[1];
+      resizeSegmentsFromBoundaries(boundaries);
     }
   }
+}
+void CommandParser::mergeSegments(Direction direction, uint8_t segmentIndex) {
+  controller->mergeSegments(direction, segmentIndex);
+}
+void CommandParser::splitSegment(EffectType newEffect, Direction direction, uint8_t segmentIndex) {
+  controller->splitSegment(newEffect, direction, segmentIndex);
+}
+void CommandParser::resizeSegmentsFromBoundaries(JsonArray boundaries) {
+  controller->resizeSegmentsFromBoundaries(boundaries);
 }
 void CommandParser::errorResponse(const char* error, const char* message) {
   StaticJsonDocument<200> responseDoc;
