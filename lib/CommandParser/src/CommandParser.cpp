@@ -43,6 +43,7 @@ void CommandParser::getState() {
   StaticJsonDocument<JSON_ARRAY_SIZE(36)> responseDoc;
   JsonArray response = responseDoc.to<JsonArray>();
   response.add((int)GET_STATE);
+  response.add(settings->getId());
   response.add(controller->getTotalLEDs());
   response.add(FastLED.getBrightness());
   response.add(getSegments());

@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
+#include <string>
 char* generateMicroId() {
     static char id[12];
     static const char alphanum[] =
@@ -17,7 +18,7 @@ char* generateMicroId() {
     return id;
 };
 Settings defaultSettings = {
-  microId : "unitialized",
+  microId : 0,
   totalLEDs : 288,
   defaultBrightness : 20,
   numStrips : 2,
@@ -61,17 +62,18 @@ EEPROMSettings::EEPROMSettings()
 }
 void EEPROMSettings::writeDefault()
 {
-  static char microId[12];
-  static const char alphanum[] =
-    "0123456789"
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    "abcdefghijklmnopqrstuvwxyz";
+  // static char microId[12];
+  // static const char alphanum[] =
+  //   "0123456789"
+  //   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  //   "abcdefghijklmnopqrstuvwxyz";
 
-  for (int i = 0; i < 12; ++i) {
-    microId[i] = alphanum[random(1, 2147483647) % (sizeof(alphanum) - 1)];
-  }
-  microId[12] = 0;
-  strcpy(defaultSettings.microId, microId);
+  // for (int i = 0; i < 11; ++i) {
+  //   microId[i] = alphanum[random(1, 2147483647) % (sizeof(alphanum) - 1)];
+  // }
+  // microId[11] = 0;
+  // strcpy(defaultSettings.microId, microId);
+  defaultSettings.microId = random(1, 2147483647);
   for(int i = 0; i < defaultSettings.numSegments; i++) {
     defaultSettings.segments[i].id = random(1, 2147483647);
   }
@@ -117,4 +119,8 @@ const uint8_t EEPROMSettings::getNumStrips()
 const uint8_t EEPROMSettings::getNumSegments()
 {
   return settings.numSegments;
+}
+const uint32_t EEPROMSettings::getId()
+{
+  return settings.microId;
 }

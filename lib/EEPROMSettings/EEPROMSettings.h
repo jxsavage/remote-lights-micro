@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
+#include <string>
 struct FastLEDStripSettings
 {
   uint16_t offset;
@@ -17,7 +18,7 @@ struct RemoteLightsSegmentSettings
 };
 struct Settings
 {
-  char microId[12];
+  uint32_t microId;
   uint16_t totalLEDs;
   uint8_t defaultBrightness;
   uint8_t numStrips;
@@ -32,6 +33,7 @@ public:
   EEPROMSettings();
   void clearEEPROM();
   void writeDefault();
+  const uint32_t getId();
   const Settings getSettings();
   const uint16_t getTotalLEDs();
   const uint8_t getDefaultBrightness();
