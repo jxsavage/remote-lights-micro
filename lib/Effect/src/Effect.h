@@ -1,16 +1,17 @@
 #ifndef EFFECT_H
 #define EFFECT_H
+
 #include <FastLED.h>
-typedef enum {ET_ColorWaves, ET_BlendWave} EffectType;
+typedef enum {INVALID_EFFECT = -1, COLORWAVES, BLENDWAVE} EffectType;
 class Effect
 {
 	protected:
 		CRGB* LEDs;
-		uint16_t numLEDs;
-		uint16_t offset;
+		int16_t numLEDs;
+		int16_t offset;
 		EffectType effectType;
 	public:
-		Effect(CRGB* LEDs, uint16_t numLEDs, EffectType effectType, uint16_t offset = 0){
+		Effect(CRGB* LEDs, int16_t numLEDs, EffectType effectType, int16_t offset = 0){
 			setLEDs(LEDs);
 			setNumLEDs(numLEDs);
 			setOffset(offset);
@@ -23,10 +24,10 @@ class Effect
 		void setLEDs(CRGB* LEDs) {
 			this->LEDs = LEDs;
 		}
-		void setOffset(uint16_t offset) {
+		void setOffset(int16_t offset) {
 			this->offset = offset;
 		}
-		void setNumLEDs(uint16_t numLEDs) {
+		void setNumLEDs(int16_t numLEDs) {
 			this->numLEDs = numLEDs;
 		}
 		virtual void render() = 0;

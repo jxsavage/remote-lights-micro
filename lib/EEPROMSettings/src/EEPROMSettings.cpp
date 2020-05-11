@@ -3,6 +3,7 @@
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
+#include <enums.h>
 char* generateMicroId() {
     static char id[12];
     static const char alphanum[] =
@@ -37,13 +38,13 @@ Settings defaultSettings = {
       id: 0,
       offset : 0,
       numLEDs : 144,
-      effect : ET_BlendWave
+      effect : BLENDWAVE
     },
     {
       id: 0,
       offset : 144,
       numLEDs : 144,
-      effect : ET_ColorWaves
+      effect : COLORWAVES
     },
   }
 };

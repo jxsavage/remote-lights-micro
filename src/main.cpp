@@ -1,5 +1,18 @@
+// Figure out how to get rid of this stub... think it has something to do with using std::unordered map?
+extern "C" {
+	int _write(int file, char *ptr, int len)
+{
+	  //  int todo;
+
+	/* Implement your write code here, this is used by puts and printf for example */
+	return len;
+}
+}
+#define ENABLE_REMOTE_LIGHTS_DEBUG
+#define REMOTE_LIGHTS_LOGGER_LEVEL 1
 #define USE_OCTOWS2811
 #define DATA_RATE 2
+#include <enums.h>
 #include <Arduino.h>
 #include <OctoWS2811.h>
 #include <FastLED.h>
@@ -7,6 +20,7 @@
 #include <LEDController.h>
 #include <CommandParser.h>
 #include <EEPROMSettings.h>
+
 // Use qsuba for smooth pixel colouring and qsubd for non-smooth pixel colouring
 // #define qsubd(x, b)  ((x>b)?b:0)                              // Digital unsigned subtraction macro. if result <0, then => 0. Otherwise, take on fixed value.
 // #define qsuba(x, b)  ((x>b)?x-b:0)                            // Analog Unsigned subtraction macro. if result <0, then => 0
@@ -45,5 +59,11 @@ void loop()
 	}
 	controller.renderEffects();
 	FastLED.show();
+	#ifdef ENABLE_REMOTE_LIGHTS_DEBUG
+	static CEveryNSeconds pingTime = CEveryNSeconds(10);
+	if (pingTime) {
+		REMOTE_LOG(PING, "micro ping...");
+	}
+	#endif
 	//FastLED.delay(20);
 } // loop()

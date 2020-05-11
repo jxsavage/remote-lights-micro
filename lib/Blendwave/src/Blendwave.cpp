@@ -2,8 +2,9 @@
 #include <Effect.h>
 #include "Blendwave.h"
 #include <Effect.h>
+
 BlendWave::BlendWave(CRGB* LEDs, uint16_t numLEDs, uint16_t offset = 0)
-  : Effect(LEDs, numLEDs, ET_BlendWave, offset) {
+  : Effect(LEDs, numLEDs, BLENDWAVE, offset) {
     blendWaveSpeed = beatsin8(6,0,255);
     blendWaveColor1 = CRGB(blend(CHSV(beatsin8(3,0,255),255,255), CHSV(beatsin8(4,0,255),255,255), blendWaveSpeed));
     blendWaveColor2 = CRGB(blend(CHSV(beatsin8(4,0,255),255,255), CHSV(beatsin8(3,0,255),255,255), blendWaveSpeed));

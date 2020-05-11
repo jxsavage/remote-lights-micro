@@ -3,7 +3,7 @@
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
-#include <string>
+#include <LEDSegment.h>
 struct FastLEDStripSettings
 {
   uint16_t offset;
@@ -11,7 +11,7 @@ struct FastLEDStripSettings
 };
 struct RemoteLightsSegmentSettings
 {
-  uint32_t id;
+  segmentId id;
   uint16_t offset;
   uint16_t numLEDs;
   EffectType effect;

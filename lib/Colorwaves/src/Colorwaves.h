@@ -2,7 +2,7 @@
 #define COLORWAVES_H
 #include <FastLED.h>
 #include <Effect.h>
-
+#include <enums.h>
 class ColorWaves: public Effect
 {
 	protected:

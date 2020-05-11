@@ -2,7 +2,7 @@
 #define BLENDWAVE_H
 #include <FastLED.h>
 #include <Effect.h>
-
+#include <enums.h>
 class BlendWave: public Effect {
   protected:
     CRGB blendWaveColor1;

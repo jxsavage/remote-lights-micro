@@ -1,32 +1,44 @@
 #ifndef LEDCONTROLLER_H
 #define LEDCONTROLLER_H
-using namespace std;
 #include <vector>
+#include <unordered_map>
 #include <FastLED.h>
 #include <LEDSegment.h>
 #include <EEPROMSettings.h>
+#include <enums.h>
 #include <logger.h>
 
-enum Direction: uint8_t {
-  LEFT,
-  RIGHT
-};
+
+typedef std::vector<segmentId> SegmentIds;
+typedef std::unordered_map<segmentId, LEDSegment> SegmentsMap;
+
 class LEDController {
   CRGB* allLEDs;
   uint16_t totalLEDs;
   EEPROMSettings* settings;
-  vector<LEDSegment> segments;
+  SegmentIds segmentIds;
+  SegmentsMap segments;
   public:
     LEDController() = default;
     LEDController(EEPROMSettings* settings, CRGB* leds);
 
     void renderEffects();
     uint16_t getTotalLEDs();
-    vector<LEDSegment>* getSegments();
+    SegmentsMap* getSegments();
+    SegmentIds* getSegmentIds();
     void resizeSegmentsFromBoundaries(JsonArray boundaries);
-    void mergeSegments(Direction direction, uint8_t segmentIndex);
-    void setSegmentEffect(EffectType effectType, uint8_t segmentIndex);
-    void splitSegment(EffectType newEffect, Direction direction, uint8_t segmentIndex);
-    void addSegment(uint16_t numLEDs, EffectType effectType, uint16_t offset, uint32_t id = 0);
+    void mergeSegments(Direction, segmentId);
+    void setSegmentEffect(EffectType, segmentId);
+    void splitSegment(EffectType newEffect, Direction, segmentId, segmentId newId);
+    void addSegment(segmentNumLEDs, EffectType, segmentOffset, segmentId);
+  private:
+    segmentOffset getSegmentOffset(segmentId);
+    segmentNumLEDs getSegmentNumLEDs(segmentId);
+    EffectType getSegmentEffectType(segmentId);
+    segmentId getAdjacentSegId(Direction, segmentId);
+    bool mapHasSegment(segmentId);
+    void removeSegmentId(segmentId);
+    void removeSegmentFromMap(segmentId);
+    void removeSegment(segmentId);
 };
 #endif

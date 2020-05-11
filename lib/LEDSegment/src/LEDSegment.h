@@ -3,36 +3,45 @@
 #include <logger.h>
 #include <FastLED.h>
 #include <Effect.h>
-#include <EffectFactory.h>
+#include <Colorwaves.h>
+#include <Blendwave.h>
 #include <memory>
+#include <enums.h>
+
+typedef uint32_t segmentId;
+typedef int16_t segmentOffset;
+typedef int16_t segmentNumLEDs;
+typedef std::unique_ptr<Effect> LEDSegmentEffect;
+
 class LEDSegment {
   CRGB* LEDs;
-  uint16_t offset;
-  uint16_t numLEDs;
+  segmentOffset offset;
+  segmentNumLEDs numLEDs;
   boolean reversed;
-  uint32_t segmentId;
-  std::unique_ptr<Effect> currentEffect;
+  segmentId id;
+  LEDSegmentEffect currentEffect;
   public:
     uint16_t segmentLength;
-    LEDSegment(CRGB* LEDs, uint16_t totalLEDs, EffectType effect, uint16_t offset, uint32_t segmentId) {
+    LEDSegment(CRGB* LEDs, segmentNumLEDs totalLEDs, EffectType effect, segmentOffset offset, segmentId id) {
       this->LEDs = LEDs;
       this->offset = offset;
       this->reversed = false;
       this->numLEDs = totalLEDs;
-      this->segmentId = segmentId;
+      this->id = id;
       setEffect(effect);
     }
-    uint32_t getId() {
-      return segmentId;
+    LEDSegment(){};
+    segmentId getId() {
+      return id;
     }
     CRGB* getLEDs() {
       return LEDs;
     }
-    void setOffset(uint16_t offset) {
+    void setOffset(segmentOffset offset) {
       this->offset = offset;
       currentEffect->setOffset(offset);
     }
-    uint16_t getOffset() {
+    segmentOffset getOffset() {
       return offset;
     }
     boolean isReversed() {
@@ -46,24 +55,27 @@ class LEDSegment {
       }
     }
     void setEffect(EffectType effect) {
-      if(effect == ET_ColorWaves){
-				currentEffect = std::unique_ptr<Effect>(new ColorWaves(LEDs, numLEDs, offset));
-			} else if (effect == ET_BlendWave) {
-        currentEffect = std::unique_ptr<Effect>(new BlendWave(LEDs, numLEDs, offset));
+      if(effect == COLORWAVES){
+				currentEffect = LEDSegmentEffect(new ColorWaves(LEDs, numLEDs, offset));
+			} else if (effect == BLENDWAVE) {
+        currentEffect = LEDSegmentEffect(new BlendWave(LEDs, numLEDs, offset));
       }
     }
     void renderEffect() {
       currentEffect->render();
     }
-    uint16_t getNumLEDs() {
+    segmentNumLEDs getNumLEDs() {
       return numLEDs;
     }
-    void setNumLEDs(uint16_t numLEDs) {
+    void setNumLEDs(segmentNumLEDs numLEDs) {
       this->numLEDs = numLEDs;
       currentEffect->setNumLEDs(numLEDs);
     }
     EffectType getEffect() {
       return currentEffect->getEffect();
+    }
+    static segmentId generateId() {
+      return random(1, 2147483647);
     }
 };
 #endif

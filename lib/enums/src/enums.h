@@ -1,0 +1,20 @@
+#ifndef ENUMS_LIST_H
+#define ENUMS_LIST_H
+/*
+* Command codes sent from controller
+*/
+enum Commands {
+  GET_STATE = 1, RESET_MICRO, SPLIT_SEGMENT,
+  SET_BRIGHTNESS, MERGE_SEGMENTS, SET_SEGMENT_EFFECT,
+  RESIZE_SEGMENTS_FROM_BOUNDARIES,
+};
+enum Messages {
+  ERROR = 130, WARNING, INFO, DEBUG, PING, PONG,
+  COMMAND_SUCCESS, COMMAND_FAILURE,
+};
+enum Direction {
+  BEFORE,
+  AFTER
+};
+
+#endif
