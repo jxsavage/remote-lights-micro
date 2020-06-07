@@ -33,6 +33,13 @@ void CommandParser::parseCommand(String commandStr) {
     } else if (cmd == RESIZE_SEGMENTS_FROM_BOUNDARIES) {
       JsonArray boundaries = command[1];
       resizeSegmentsFromBoundaries(boundaries);
+    } else if (cmd == SET_MICRO_ID) {
+      uint32_t newId = command[1];
+      setMicroId(newId);
+    } else if (cmd == SET_SEGMENT_ID) {
+      segmentId oldId = command[1];
+      segmentId newId = command[2];
+      setSegmentId(oldId, newId);
     }
   }
 }
@@ -52,7 +59,7 @@ void CommandParser::getState() {
   StaticJsonDocument<JSON_ARRAY_SIZE(36)> responseDoc;
   JsonArray response = responseDoc.to<JsonArray>();
   response.add((int)GET_STATE);
-  response.add(settings->getId());
+  response.add((int)settings->getId());
   response.add(controller->getTotalLEDs());
   response.add(FastLED.getBrightness());
   response.add(getSegments());
@@ -82,4 +89,10 @@ JsonArray CommandParser::getSegments() {
 }
 void CommandParser::setSegmentEffect(EffectType effectType, segmentId segId) {
   controller->setSegmentEffect(effectType, segId);
+}
+void CommandParser::setSegmentId(segmentId oldId, segmentId newId) {
+  controller->setSegmentId(oldId, newId);
+}
+void CommandParser::setMicroId(uint32_t id) {
+  settings->setId(id);
 }

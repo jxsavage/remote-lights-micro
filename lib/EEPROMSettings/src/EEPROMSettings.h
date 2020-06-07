@@ -32,8 +32,11 @@ class EEPROMSettings
 public:
   EEPROMSettings();
   void clearEEPROM();
+  void writeEEPROM();
   void writeDefault();
+  void setId(uint32_t);
   const uint32_t getId();
+  void setSegmentId(segmentId oldId, segmentId newId);
   const Settings getSettings();
   const uint16_t getTotalLEDs();
   const uint8_t getDefaultBrightness();

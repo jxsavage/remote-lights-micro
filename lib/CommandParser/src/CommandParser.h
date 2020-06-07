@@ -19,6 +19,8 @@ class CommandParser {
     void getState();
     void setState();
     JsonArray getSegments();
+    void setMicroId(uint32_t);
+    void setSegmentId(segmentId oldId, segmentId newId);
     void setBrightness(uint8_t brightness);
     void parseCommand(String serialCommand);
     void setSegmentEffect(EffectType, segmentId);

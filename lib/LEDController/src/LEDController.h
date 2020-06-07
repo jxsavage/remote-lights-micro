@@ -18,7 +18,7 @@ class LEDController {
   EEPROMSettings* settings;
   SegmentIds segmentIds;
   SegmentsMap segments;
-  public:
+ public:
     LEDController() = default;
     LEDController(EEPROMSettings* settings, CRGB* leds);
 
@@ -26,12 +26,15 @@ class LEDController {
     uint16_t getTotalLEDs();
     SegmentsMap* getSegments();
     SegmentIds* getSegmentIds();
-    void resizeSegmentsFromBoundaries(JsonArray boundaries);
+    void setId(uint32_t);
+    void setSegmentId(segmentId oldId, segmentId newId);
     void mergeSegments(Direction, segmentId);
     void setSegmentEffect(EffectType, segmentId);
-    void splitSegment(EffectType newEffect, Direction, segmentId, segmentId newId);
+    void resizeSegmentsFromBoundaries(JsonArray boundaries);
     void addSegment(segmentNumLEDs, EffectType, segmentOffset, segmentId);
-  private:
+    void splitSegment(EffectType newEffect, Direction, segmentId, segmentId newId);
+
+ private:
     segmentOffset getSegmentOffset(segmentId);
     segmentNumLEDs getSegmentNumLEDs(segmentId);
     EffectType getSegmentEffectType(segmentId);

@@ -4,19 +4,7 @@
 #include <FastLED.h>
 #include <Effect.h>
 #include <enums.h>
-char* generateMicroId() {
-    static char id[12];
-    static const char alphanum[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
 
-    for (int i = 0; i <= 11; ++i) {
-        id[i] = alphanum[random(1, 2147483647) % (sizeof(alphanum) - 1)];
-    }
-
-    return id;
-};
 Settings defaultSettings = {
   microId : 0,
   totalLEDs : 288,
@@ -35,13 +23,13 @@ Settings defaultSettings = {
   numSegments : 2,
   segments : {
     {
-      id: 0,
+      id: 1,
       offset : 0,
       numLEDs : 144,
       effect : BLENDWAVE
     },
     {
-      id: 0,
+      id: 3,
       offset : 144,
       numLEDs : 144,
       effect : COLORWAVES
@@ -51,32 +39,16 @@ Settings defaultSettings = {
 
 EEPROMSettings::EEPROMSettings()
 {
-  settingsLoaded = false;
+  settingsLoaded = areSettingsLoaded();
   if (!settingsLoaded)
   {
     writeDefault();
     settingsLoaded = true;
   };
   EEPROM.get(1, settings);
-  settingsLoaded = true;
 }
 void EEPROMSettings::writeDefault()
 {
-  // static char microId[12];
-  // static const char alphanum[] =
-  //   "0123456789"
-  //   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  //   "abcdefghijklmnopqrstuvwxyz";
-
-  // for (int i = 0; i < 11; ++i) {
-  //   microId[i] = alphanum[random(1, 2147483647) % (sizeof(alphanum) - 1)];
-  // }
-  // microId[11] = 0;
-  // strcpy(defaultSettings.microId, microId);
-  defaultSettings.microId = random(1, 2147483647);
-  for(int i = 0; i < defaultSettings.numSegments; i++) {
-    defaultSettings.segments[i].id = random(1, 2147483647);
-  }
   EEPROM.put(1, defaultSettings);
   EEPROM.put(0, 255);
 }
@@ -123,4 +95,20 @@ const uint8_t EEPROMSettings::getNumSegments()
 const uint32_t EEPROMSettings::getId()
 {
   return settings.microId;
+}
+void EEPROMSettings::setId(uint32_t id) {
+  settings.microId = id;
+  writeEEPROM();
+}
+void EEPROMSettings::setSegmentId(segmentId oldId, segmentId newId) {
+  for(int i = 0; i < settings.numSegments; i++) {
+    if(settings.segments[i].id == oldId) {
+      settings.segments[i].id = newId;
+      writeEEPROM();
+      break;
+    }
+  }
+}
+void EEPROMSettings::writeEEPROM() {
+  EEPROM.put(1, settings);
 }

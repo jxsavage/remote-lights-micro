@@ -74,8 +74,8 @@ class LEDSegment {
     EffectType getEffect() {
       return currentEffect->getEffect();
     }
-    static segmentId generateId() {
-      return random(1, 2147483647);
+    void setId(segmentId segId) {
+      id = segId;
     }
 };
 #endif
