@@ -40,8 +40,13 @@ void CommandParser::parseCommand(String commandStr) {
       segmentId oldId = command[1];
       segmentId newId = command[2];
       setSegmentId(oldId, newId);
+    } else if (cmd == WRITE_EEPROM) {
+      writeEEPROM();
     }
   }
+}
+void CommandParser::writeEEPROM() {
+  controller->writeEEPROM();
 }
 void CommandParser::mergeSegments(Direction direction, segmentId segId) {
   controller->mergeSegments(direction, segId);
@@ -95,4 +100,11 @@ void CommandParser::setSegmentId(segmentId oldId, segmentId newId) {
 }
 void CommandParser::setMicroId(uint32_t id) {
   settings->setId(id);
+}
+// https://forum.pjrc.com/threads/24304-_reboot_Teensyduino()-vs-_restart_Teensyduino()
+#define CPU_RESTART_ADDR (uint32_t *)0xE000ED0C
+#define CPU_RESTART_VAL 0x5FA0004
+#define CPU_RESTART (*CPU_RESTART_ADDR = CPU_RESTART_VAL);
+void CommandParser::resetMicro() {
+  CPU_RESTART
 }

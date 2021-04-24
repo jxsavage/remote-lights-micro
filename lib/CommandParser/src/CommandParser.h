@@ -16,8 +16,11 @@ class CommandParser {
       this->controller = controller;
       this-> settings = settings;
     }
+    
     void getState();
     void setState();
+    void writeEEPROM();
+    void resetMicro();
     JsonArray getSegments();
     void setMicroId(uint32_t);
     void setSegmentId(segmentId oldId, segmentId newId);

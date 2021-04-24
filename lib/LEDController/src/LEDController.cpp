@@ -21,6 +21,15 @@ LEDController::LEDController(EEPROMSettings* settings, CRGB* leds) {
     addSegment(numLEDs, effect, offset, segId);
   }
 }
+/**
+ * Writes current settings to EEPROM.
+ */
+void LEDController::writeEEPROM() {
+  settings->writeEEPROM();
+}
+/**
+ * 
+ */
 void LEDController::setSegmentId(segmentId oldId, segmentId newId) {
   SegmentIds::iterator id;
   for (id = segmentIds.begin(); id != segmentIds.end(); id++) {
@@ -127,8 +136,9 @@ void LEDController::renderEffects() {
     seg->second.renderEffect();
   }
 }
-void LEDController::splitSegment(EffectType newEffect, Direction direction,
-                                 segmentId segId, segmentId newId) {
+void LEDController::splitSegment(
+  EffectType newEffect, Direction direction, segmentId segId, segmentId newId
+  ) {
   bool validSplit = mapHasSegment(segId);
   if (validSplit) {
     segmentNumLEDs numLEDs = segments[segId].getNumLEDs();
