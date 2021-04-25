@@ -15,7 +15,7 @@ After=network-online.target
 Type=simple
 Environment="PLATFORMIO_AUTH_TOKEN=<insert your token here>"
 WorkingDirectory=/home/<your user name>/.platformio/penv
-ExecStart=/home/<your user name>/.platformio/penv/bin/pio remote agent start --serve-in-foreground
+ExecStart=/home/<your user name>/.platformio/penv/bin/pio remote agent start
 User=<your user name>
 Restart=always
 RestartSec=3
