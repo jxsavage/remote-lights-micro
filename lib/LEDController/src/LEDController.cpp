@@ -9,17 +9,7 @@
 LEDController::LEDController(EEPROMSettings* settings, CRGB* leds) {
   this->allLEDs = leds;
   this->settings = settings;
-  this->totalLEDs = settings->getTotalLEDs();
-
-  FastLED.setBrightness(settings->getDefaultBrightness());
-  for (int i = 0; i < settings->getNumSegments(); i++) {
-    const RemoteLightsSegmentSettings segment = settings->getSegment(i);
-    uint16_t offset = segment.offset;
-    uint16_t numLEDs = segment.numLEDs;
-    EffectType effect = segment.effect;
-    segmentId segId = segment.id;
-    addSegment(numLEDs, effect, offset, segId);
-  }
+  loadEEPROM();
 }
 /**
  * Writes current settings to EEPROM.
@@ -28,7 +18,7 @@ void LEDController::writeEEPROM() {
   settings->writeEEPROM();
 }
 /**
- * 
+ * Sets a segments ID.
  */
 void LEDController::setSegmentId(segmentId oldId, segmentId newId) {
   SegmentIds::iterator id;
@@ -51,6 +41,9 @@ void LEDController::setSegmentId(segmentId oldId, segmentId newId) {
   removeSegmentFromMap(oldId);
   settings->setSegmentId(oldId, newId);
 }
+/**
+ * Get segments offset into allLEDs.
+ */
 segmentOffset LEDController::getSegmentOffset(segmentId segId) {
   SegmentsMap::iterator seg = segments.find(segId);
   if (seg != segments.end()) return seg->second.getOffset();
@@ -104,6 +97,24 @@ bool LEDController::mapHasSegment(segmentId segId) {
 void LEDController::removeSegment(segmentId segId) {
   removeSegmentId(segId);
   removeSegmentFromMap(segId);
+}
+void LEDController::removeAllSegments() {
+  segmentIds.clear();
+  segments.clear();
+}
+void LEDController::loadEEPROM() {
+  removeAllSegments();
+  this->totalLEDs = settings->getTotalLEDs();
+
+  FastLED.setBrightness(settings->getDefaultBrightness());
+  for (int i = 0; i < settings->getNumSegments(); i++) {
+    const RemoteLightsSegmentSettings segment = settings->getSegment(i);
+    uint16_t offset = segment.offset;
+    uint16_t numLEDs = segment.numLEDs;
+    EffectType effect = segment.effect;
+    segmentId segId = segment.id;
+    addSegment(numLEDs, effect, offset, segId);
+  }
 }
 void LEDController::mergeSegments(Direction direction, segmentId segId) {
   bool mergeBefore = direction == BEFORE;

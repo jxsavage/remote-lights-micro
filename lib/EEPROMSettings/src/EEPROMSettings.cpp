@@ -1,10 +1,11 @@
-#include "EEPROMSettings.h"
+#include <EEPROMSettings.h>
 #include <logger.h>
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
 #include <enums.h>
 
+#ifdef USE_TEENSY
 Settings defaultSettings = {
   microId : 0,
   totalLEDs : 288,
@@ -36,21 +37,50 @@ Settings defaultSettings = {
     },
   }
 };
+#endif
+#ifdef USE_ESP32
+Settings defaultSettings = {
+  microId : 0,
+  totalLEDs : 144,
+  defaultBrightness : 20,
+  numStrips : 1,
+  strips : {
+    {
+      offset : 0,
+      numLEDs : 144,
+    }
+  },
+  numSegments : 1,
+  segments : {
+    {
+      id: 1,
+      offset : 0,
+      numLEDs : 144,
+      effect : BLENDWAVE
+    }
+  }
+};
+#endif
 
 EEPROMSettings::EEPROMSettings()
 {
-  settingsLoaded = areSettingsLoaded();
-  if (!settingsLoaded)
-  {
-    writeDefault();
-    settingsLoaded = true;
-  };
-  EEPROM.get(1, settings);
+  // settingsLoaded = areSettingsLoaded();
+  // if (!settingsLoaded)
+  // {
+  //   writeDefault();
+  //   settingsLoaded = true;
+  // };
+  // EEPROM.get(1, settings);
+  settings = defaultSettings;
 }
 void EEPROMSettings::writeDefault()
 {
+  int settingsLoaded = 255;
+  uint16_t eepromSize = sizeof defaultSettings + sizeof settingsLoaded;
+  EEPROM.begin(eepromSize);
   EEPROM.put(1, defaultSettings);
   EEPROM.put(0, 255);
+  EEPROM.end();
 }
 void EEPROMSettings::clearEEPROM()
 {
@@ -111,4 +141,5 @@ void EEPROMSettings::setSegmentId(segmentId oldId, segmentId newId) {
 }
 void EEPROMSettings::writeEEPROM() {
   EEPROM.put(1, settings);
+  EEPROM.commit();
 }

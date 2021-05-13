@@ -22,8 +22,10 @@ class LEDController {
    LEDController() = default;
    LEDController(EEPROMSettings* settings, CRGB* leds);
    
+   void loadEEPROM();
    void writeEEPROM();
    void renderEffects();
+   void removeAllSegments();
    uint16_t getTotalLEDs();
    SegmentsMap* getSegments();
    SegmentIds* getSegmentIds();

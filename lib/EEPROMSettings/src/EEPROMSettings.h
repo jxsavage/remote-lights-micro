@@ -1,5 +1,6 @@
 #ifndef EEPROM_SETTINGS
 #define EEPROM_SETTINGS
+#define USE_ESP32
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
