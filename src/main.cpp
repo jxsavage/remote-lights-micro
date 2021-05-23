@@ -37,7 +37,7 @@ int _write(int file, char *ptr, int len) {
 #define FORMAT_LITTLEFS_IF_FAILED true
 #include <BluetoothSerial.h>
 #include <LITTLEFS.h>
-#include "FS.h";
+#include "FS.h"
 BluetoothSerial clientSerial;
 #endif
 

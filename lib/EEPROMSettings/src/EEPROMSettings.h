@@ -5,7 +5,7 @@
 #pragma message("Compiling with USE_TEENSY Set")
 #define USE_TEENSY
 #elif !defined(USE_ESP32)
-#pragma once  message("Compiling with USE_ESP32 Set")
+#pragma message("Compiling with USE_ESP32 Set")
 #define USE_ESP32
 #endif
 #include <EEPROM.h>
