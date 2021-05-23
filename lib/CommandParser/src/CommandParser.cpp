@@ -4,6 +4,9 @@
 #include <ArduinoJson.h>
 #include <ClientSerial.h>
 #include <CommandParser.h>
+#ifdef USE_ESP32
+#include <BluetoothSerial.h>
+#endif
 
 #define ARDUINOJSON_ENABLE_ARDUINO_STRING 1
 void CommandParser::parseCommand(String commandStr) {
@@ -46,11 +49,24 @@ void CommandParser::parseCommand(String commandStr) {
       writeEEPROM();
     } else if (cmd == LOAD_EEPROM) {
       loadEEPROM();
+    } else if (cmd == RESTORE_DEFAULT) {
+      restoreDefault();
     }
     if (cmd == GET_STATE || currentResponseHeader == TEST) {
       getState();
+    } else if (currentResponseHeader == CONFIRM_COMMAND) {
+      StaticJsonDocument<JSON_ARRAY_SIZE(2)> responseDoc;
+      JsonArray response = responseDoc.to<JsonArray>();
+      response.add(currentCommandId);
+      serializeJson(response, clientSerial);
+      clientSerial.print('\n');
+      clientSerial.flush();
     }
   }
+}
+void CommandParser::restoreDefault() {
+  settings->restoreDefault();
+  loadEEPROM();
 }
 void CommandParser::writeEEPROM() {
   controller->writeEEPROM();
@@ -75,13 +91,13 @@ void CommandParser::getState() {
   JsonArray response = responseDoc.to<JsonArray>();
   response.add(currentCommandId);
   response.add((int)GET_STATE);
-  response.add((int)settings->getId());
+  response.add(settings->getId());
   response.add(controller->getTotalLEDs());
   response.add(FastLED.getBrightness());
   response.add(getSegments());
-  serializeJson(response, client->serial);
-  client->serial.print('\n');
-  client->serial.flush();
+  serializeJson(response, clientSerial);
+  clientSerial.print('\n');
+  clientSerial.flush();
 }
 void CommandParser::setState() {
 
@@ -112,6 +128,12 @@ void CommandParser::setSegmentId(segmentId oldId, segmentId newId) {
 void CommandParser::setMicroId(uint32_t id) {
   settings->setId(id);
 }
+#ifdef USE_ESP32
+void CommandParser::resetMicro() {
+  ESP.restart();
+}
+#endif
+#ifdef USE_TEENSY
 // https://forum.pjrc.com/threads/24304-_reboot_Teensyduino()-vs-_restart_Teensyduino()
 #define CPU_RESTART_ADDR (uint32_t *)0xE000ED0C
 #define CPU_RESTART_VAL 0x5FA0004
@@ -119,3 +141,4 @@ void CommandParser::setMicroId(uint32_t id) {
 void CommandParser::resetMicro() {
   CPU_RESTART
 }
+#endif

@@ -1,44 +1,16 @@
 #include <EEPROMSettings.h>
 #include <logger.h>
-#include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
 #include <enums.h>
-
+// #define FORCE_DEFAULT_MEM_RESET
 #ifdef USE_TEENSY
-Settings defaultSettings = {
-  microId : 0,
-  totalLEDs : 288,
-  defaultBrightness : 20,
-  numStrips : 2,
-  strips : {
-    {
-      offset : 0,
-      numLEDs : 144,
-    },
-    {
-      offset : 144,
-      numLEDs : 144,
-    }
-  },
-  numSegments : 2,
-  segments : {
-    {
-      id: 1,
-      offset : 0,
-      numLEDs : 144,
-      effect : BLENDWAVE
-    },
-    {
-      id: 3,
-      offset : 144,
-      numLEDs : 144,
-      effect : COLORWAVES
-    },
-  }
-};
+#include <EEPROM.h>
 #endif
 #ifdef USE_ESP32
+#include <LITTLEFS.h>
+#include "FS.h"
+#define FORMAT_LITTLEFS_IF_FAILED true
 Settings defaultSettings = {
   microId : 0,
   totalLEDs : 144,
@@ -60,73 +32,90 @@ Settings defaultSettings = {
     }
   }
 };
-#endif
-
 EEPROMSettings::EEPROMSettings()
 {
-  // settingsLoaded = areSettingsLoaded();
-  // if (!settingsLoaded)
-  // {
-  //   writeDefault();
-  //   settingsLoaded = true;
-  // };
-  // EEPROM.get(1, settings);
-  settings = defaultSettings;
+  #ifdef FORCE_DEFAULT_MEM_RESET
+  #pragma message("FORCE_DEFAULT_MEM_RESET IS SET, RESETTING TO DEFAULT SETTINGS")
+  writeDefault();
+  #endif
+  settingsLoaded = areSettingsLoaded();
+  if (!settingsLoaded)
+  {
+    writeDefault();
+    settingsLoaded = true;
+  };
+  loadSettings();
+  // settings = defaultSettings;
+}
+void EEPROMSettings::restoreDefault() {
+  writeDefault();
+  loadSettings();
+}
+void EEPROMSettings::loadSettings() {
+  File settingsFile = LITTLEFS.open("/settings", FILE_READ);
+  if(!settingsFile) {
+    Serial.println("File not available.");
+  } else if (settingsFile.available() <= 0) {
+    Serial.println("File exists but is empty.");
+  } else {
+    settingsFile.read((byte *)&settings, sizeof(settings));
+  }
+  settingsFile.close();
 }
 void EEPROMSettings::writeDefault()
 {
-  int settingsLoaded = 255;
-  uint16_t eepromSize = sizeof defaultSettings + sizeof settingsLoaded;
-  EEPROM.begin(eepromSize);
-  EEPROM.put(1, defaultSettings);
-  EEPROM.put(0, 255);
-  EEPROM.end();
+  File settingsFile = LITTLEFS.open("/settings", FILE_WRITE);
+  settingsFile.write((byte *)&defaultSettings, sizeof(defaultSettings));
+  settingsFile.close();
 }
 void EEPROMSettings::clearEEPROM()
 {
-  for (int i = 0; i < EEPROM.length(); i++)
-  {
-    EEPROM.write(i, 0);
-  }
+  writeDefault();
 }
-const boolean EEPROMSettings::areSettingsLoaded()
+boolean EEPROMSettings::areSettingsLoaded()
 {
-  return EEPROM.read(0) == 255;
+  File settingsFile = LITTLEFS.open("/settings", FILE_READ);
+  boolean areLoaded = false;
+  if (settingsFile) {
+    areLoaded = true;
+  }
+  settingsFile.close();
+  return areLoaded;
 }
-const Settings EEPROMSettings::getSettings()
+Settings EEPROMSettings::getSettings()
 {
   return settings;
 }
 
-const uint16_t EEPROMSettings::getTotalLEDs()
+uint16_t EEPROMSettings::getTotalLEDs()
 {
   return settings.totalLEDs;
 }
-const uint8_t EEPROMSettings::getDefaultBrightness()
+uint8_t EEPROMSettings::getDefaultBrightness()
 {
   return settings.defaultBrightness;
 }
-const FastLEDStripSettings EEPROMSettings::getStrip(uint8_t stripIndex)
+FastLEDStripSettings EEPROMSettings::getStrip(uint8_t stripIndex)
 {
   return settings.strips[stripIndex];
 }
-const RemoteLightsSegmentSettings EEPROMSettings::getSegment(uint8_t segmentIndex)
+RemoteLightsSegmentSettings EEPROMSettings::getSegment(uint8_t segmentIndex)
 {
   return settings.segments[segmentIndex];
 }
-const uint8_t EEPROMSettings::getNumStrips()
+uint8_t EEPROMSettings::getNumStrips()
 {
   return settings.numStrips;
 }
-const uint8_t EEPROMSettings::getNumSegments()
+uint8_t EEPROMSettings::getNumSegments()
 {
   return settings.numSegments;
 }
-const uint32_t EEPROMSettings::getId()
+int EEPROMSettings::getId()
 {
   return settings.microId;
 }
-void EEPROMSettings::setId(uint32_t id) {
+void EEPROMSettings::setId(int id) {
   settings.microId = id;
   writeEEPROM();
 }
@@ -140,6 +129,129 @@ void EEPROMSettings::setSegmentId(segmentId oldId, segmentId newId) {
   }
 }
 void EEPROMSettings::writeEEPROM() {
-  EEPROM.put(1, settings);
-  EEPROM.commit();
+  File settingsFile = LITTLEFS.open("/settings", FILE_WRITE);
+  settingsFile.write((byte *)&settings, sizeof(settings));
+  settingsFile.close();
 }
+#endif
+#ifdef USE_TEENSY
+Settings defaultSettings = {
+  microId : 0,
+  totalLEDs : 288,
+  defaultBrightness : 15,
+  numStrips : 2,
+  strips : {
+    {
+      offset : 0,
+      numLEDs : 144,
+    },
+    {
+      offset : 144,
+      numLEDs : 144,
+    }
+  },
+  numSegments : 2,
+  segments : {
+    {
+      id: 5,
+      offset : 0,
+      numLEDs : 144,
+      effect : BLENDWAVE
+    },
+    {
+      id: 6,
+      offset : 144,
+      numLEDs : 144,
+      effect : COLORWAVES
+    },
+  }
+};
+EEPROMSettings::EEPROMSettings()
+{
+  #ifdef FORCE_DEFAULT_MEM_RESET
+  #pragma message("FORCE_DEFAULT_MEM_RESET IS SET, RESETTING TO DEFAULT SETTINGS")
+  restoreDefault();
+  #endif
+  settingsLoaded = areSettingsLoaded();
+  if (!settingsLoaded)
+  {
+    writeDefault();
+    settingsLoaded = true;
+  };
+  loadSettings();
+}
+void EEPROMSettings::restoreDefault() {
+  writeDefault();
+  loadSettings();
+}
+void EEPROMSettings::loadSettings() {
+  EEPROM.get(sizeof(settingsLoaded), settings);
+}
+void EEPROMSettings::writeDefault()
+{
+  EEPROM.put(0, true);
+  EEPROM.put(sizeof(settingsLoaded), defaultSettings);
+}
+void EEPROMSettings::clearEEPROM()
+{
+  for (int i = 0; i < EEPROM.length(); i++)
+  {
+    EEPROM.write(i, 0);
+  }
+}
+boolean EEPROMSettings::areSettingsLoaded()
+{
+  return EEPROM.get(0, settingsLoaded) == true;
+}
+Settings EEPROMSettings::getSettings()
+{
+  return settings;
+}
+
+uint16_t EEPROMSettings::getTotalLEDs()
+{
+  return settings.totalLEDs;
+}
+uint8_t EEPROMSettings::getDefaultBrightness()
+{
+  return settings.defaultBrightness;
+}
+FastLEDStripSettings EEPROMSettings::getStrip(uint8_t stripIndex)
+{
+  return settings.strips[stripIndex];
+}
+RemoteLightsSegmentSettings EEPROMSettings::getSegment(uint8_t segmentIndex)
+{
+  return settings.segments[segmentIndex];
+}
+uint8_t EEPROMSettings::getNumStrips()
+{
+  return settings.numStrips;
+}
+uint8_t EEPROMSettings::getNumSegments()
+{
+  return settings.numSegments;
+}
+int EEPROMSettings::getId()
+{
+  // Serial.println(defaultSettings.microId); // 0
+  // Serial.println(settings.microId); // 536814352 or 536814296?????
+  return settings.microId;
+}
+void EEPROMSettings::setId(int id) {
+  settings.microId = id;
+  writeEEPROM();
+}
+void EEPROMSettings::setSegmentId(segmentId oldId, segmentId newId) {
+  for(int i = 0; i < settings.numSegments; i++) {
+    if(settings.segments[i].id == oldId) {
+      settings.segments[i].id = newId;
+      writeEEPROM();
+      break;
+    }
+  }
+}
+void EEPROMSettings::writeEEPROM() {
+  EEPROM.put(sizeof(settingsLoaded), settings);
+}
+#endif

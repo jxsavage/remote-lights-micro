@@ -1,6 +1,13 @@
 #ifndef EEPROM_SETTINGS
 #define EEPROM_SETTINGS
+// #define __MK66FX1M0__
+#if defined(__MK66FX1M0__) && !defined(USE_TEENSY)
+#pragma message("Compiling with USE_TEENSY Set")
+#define USE_TEENSY
+#elif !defined(USE_ESP32)
+#pragma once  message("Compiling with USE_ESP32 Set")
 #define USE_ESP32
+#endif
 #include <EEPROM.h>
 #include <FastLED.h>
 #include <Effect.h>
@@ -19,8 +26,8 @@ struct RemoteLightsSegmentSettings
 };
 struct Settings
 {
-  uint32_t microId;
-  uint16_t totalLEDs;
+  int microId;
+  int totalLEDs;
   uint8_t defaultBrightness;
   uint8_t numStrips;
   FastLEDStripSettings strips[2];
@@ -32,20 +39,23 @@ class EEPROMSettings
 {
 public:
   EEPROMSettings();
+  
   void clearEEPROM();
   void writeEEPROM();
+  void loadSettings();
   void writeDefault();
-  void setId(uint32_t);
-  const uint32_t getId();
+  void restoreDefault();
+  void setId(int);
+  int getId();
   void setSegmentId(segmentId oldId, segmentId newId);
-  const Settings getSettings();
-  const uint16_t getTotalLEDs();
-  const uint8_t getDefaultBrightness();
-  const boolean areSettingsLoaded();
-  const uint8_t getNumStrips();
-  const FastLEDStripSettings getStrip(uint8_t stripIndex);
-  const uint8_t getNumSegments();
-  const RemoteLightsSegmentSettings getSegment(uint8_t segmentIndex);
+  Settings getSettings();
+  uint16_t getTotalLEDs();
+  uint8_t getDefaultBrightness();
+  boolean areSettingsLoaded();
+  uint8_t getNumStrips();
+  FastLEDStripSettings getStrip(uint8_t stripIndex);
+  uint8_t getNumSegments();
+  RemoteLightsSegmentSettings getSegment(uint8_t segmentIndex);
   
 
 private:

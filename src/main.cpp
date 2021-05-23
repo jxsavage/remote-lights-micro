@@ -34,8 +34,11 @@ int _write(int file, char *ptr, int len) {
 #ifdef USE_ESP32
 // https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/BLESecurity.cpp#L67
 // https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLETests/Arduino/security/StaticPIN/StaticPIN.ino
-// #include <BluetoothSerial.h>
+#define FORMAT_LITTLEFS_IF_FAILED true
 #include <BluetoothSerial.h>
+#include <LITTLEFS.h>
+#include "FS.h";
+BluetoothSerial clientSerial;
 #endif
 
 
@@ -47,40 +50,40 @@ int _write(int file, char *ptr, int len) {
 // CRGB leds[288];
 // Initialize our LED
 // array.
-EEPROMSettings settings = EEPROMSettings();
+
 #ifdef USE_TEENSY
 CRGB leds[288];
-ClientSerial<HardwareSerial> client(Serial);
 #endif
 #ifdef USE_ESP32
 CRGB leds[144];
-BluetoothSerial serial;
-ClientSerial<BluetoothSerial> client(serial);
 #endif
 
 CommandParser command;
 LEDController controller;
-
+EEPROMSettings settings;
 void setup() {
+  #ifdef USE_ESP32
+  if (!LITTLEFS.begin(FORMAT_LITTLEFS_IF_FAILED)) {
+    Serial.println("LITTLEFS Mount Failed");
+  } else {
+    Serial.println("LITTLEFS Mounted");
+  }
+  #endif
   delay(5000);  // Soft startup to ease the flow of electrons.
   Serial.begin(115200);
-
+  settings = EEPROMSettings();
   controller = LEDController(&settings, leds);
-  command = CommandParser(&controller, &settings, &client);
+  command = CommandParser(&controller, &settings);
   #ifdef USE_ESP32
-  
-  
-  serial.begin("Remote_Lights");
-  serial.enableSSP();
-  // serial.setPin("1234");
-  
+  clientSerial.begin("Remote_Lights");
+  clientSerial.enableSSP();
+  // clientSerial.setPin("1234");
   CLEDController *strip1 = &FastLED
     .addLeds<APA102, 17, 16, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144)
     .setCorrection(TypicalSMD5050);
   #endif
   
   #ifdef USE_TEENSY
-  command = CommandParser<HardwareSerial>(&controller, &settings, &client);
   CLEDController *strip1 = &FastLED
     .addLeds<APA102, 7, 14, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144)
     .setCorrection(TypicalSMD5050);
@@ -96,33 +99,14 @@ void setup() {
 
 void loop() {
   String inData;
-  // #ifdef USE_ESP32
-  while (client.serial.available() > 0) {
-    char recieved = client.serial.read();
+  while (clientSerial.available() > 0) {
+    char recieved = clientSerial.read();
     inData += recieved;
     if (recieved == '\n') {
       command.parseCommand(inData);
       break;
     }
   }
-  // #endif
-  // #ifdef USE_TEENSY
-  // while (Serial.available() > 0) {
-  //   char recieved = Serial.read();
-  //   inData += recieved;
-  //   if (recieved == '\n') {
-  //     command.parseCommand(inData);
-  //     break;
-  //   }
-  // }
-  // #endif
   controller.renderEffects();
   FastLED.show();
-#ifdef ENABLE_REMOTE_LIGHTS_DEBUG
-  static CEveryNSeconds pingTime = CEveryNSeconds(10);
-  if (pingTime) {
-    REMOTE_LOG(PING, "micro ping...");
-  }
-#endif
-  // FastLED.delay(20);
 }  // loop()
