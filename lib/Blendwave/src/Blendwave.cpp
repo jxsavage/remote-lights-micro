@@ -1,7 +1,6 @@
 #include <FastLED.h>
 #include <Effect.h>
 #include "Blendwave.h"
-#include <Effect.h>
 
 BlendWave::BlendWave(CRGB* LEDs, uint16_t numLEDs, uint16_t offset = 0)
   : Effect(LEDs, numLEDs, BLENDWAVE, offset) {

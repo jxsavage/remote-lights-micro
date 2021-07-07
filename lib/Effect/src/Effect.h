@@ -2,7 +2,7 @@
 #define EFFECT_H
 
 #include <FastLED.h>
-typedef enum {INVALID_EFFECT = -1, COLORWAVES, BLENDWAVE} EffectType;
+typedef enum {INVALID_EFFECT = -1, COLORWAVES, BLENDWAVE, BEATWAVE, BLUR, CONFETTI, PLASMA} EffectType;
 class Effect
 {
 	protected:

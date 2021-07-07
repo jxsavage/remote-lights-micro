@@ -13,20 +13,40 @@
 #define FORMAT_LITTLEFS_IF_FAILED true
 Settings defaultSettings = {
   microId : 0,
-  totalLEDs : 144,
+  totalLEDs : 432,
   defaultBrightness : 20,
-  numStrips : 1,
+  numStrips : 3,
   strips : {
     {
       offset : 0,
       numLEDs : 144,
+    },
+    {
+      offset : 144,
+      numLEDs : 144,
+    },
+    {
+      offset : 288,
+      numLEDs : 144,
     }
   },
-  numSegments : 1,
+  numSegments : 3,
   segments : {
     {
       id: 1,
       offset : 0,
+      numLEDs : 144,
+      effect : BLENDWAVE
+    },
+    {
+      id: 2,
+      offset : 144,
+      numLEDs : 144,
+      effect : COLORWAVES
+    },
+    {
+      id: 3,
+      offset : 288,
       numLEDs : 144,
       effect : BLENDWAVE
     }
@@ -156,7 +176,7 @@ Settings defaultSettings = {
       id: 5,
       offset : 0,
       numLEDs : 144,
-      effect : BLENDWAVE
+      effect : COLORWAVES
     },
     {
       id: 6,

@@ -11,7 +11,7 @@ ColorWaves::ColorWaves(CRGB* LEDs, uint16_t numLEDs, uint16_t offset = 0)
 {
 	currentPaletteNumber = 0;
 	newPatternTime = CEveryNSeconds(10);
-	newBlendTime = CEveryNMilliseconds(40);
+	newBlendTime = CEveryNMillis(40);
 	currentPalette = CRGBPalette16(CRGB::Black);
 	targetPalette = CRGBPalette16(gGradientPalettes[0]);
 }

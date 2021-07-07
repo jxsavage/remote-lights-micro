@@ -7,7 +7,7 @@ class ColorWaves: public Effect
 {
 	protected:
 		CEveryNSeconds newPatternTime;
-		CEveryNMilliseconds newBlendTime;
+		CEveryNMillis newBlendTime;
 		TProgmemRGBGradientPalettePtr palettesArr;
 		uint8_t paletteCount;
 		uint8_t currentPaletteNumber;

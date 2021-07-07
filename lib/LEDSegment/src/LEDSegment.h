@@ -4,7 +4,11 @@
 #include <FastLED.h>
 #include <Effect.h>
 #include <Colorwaves.h>
+#include <Confetti.h>
 #include <Blendwave.h>
+#include <Beatwave.h>
+#include <Blur.h>
+#include <Plasma.h>
 #include <memory>
 #include <enums.h>
 
@@ -59,6 +63,14 @@ class LEDSegment {
 				currentEffect = LEDSegmentEffect(new ColorWaves(LEDs, numLEDs, offset));
 			} else if (effect == BLENDWAVE) {
         currentEffect = LEDSegmentEffect(new BlendWave(LEDs, numLEDs, offset));
+      } else if (effect == BEATWAVE) {
+        currentEffect = LEDSegmentEffect(new BeatWave(LEDs, numLEDs, offset));
+      } else if (effect == BLUR) {
+        currentEffect = LEDSegmentEffect(new Blur(LEDs, numLEDs, offset));
+      } else if (effect == CONFETTI) {
+        currentEffect = LEDSegmentEffect(new Confetti(LEDs, numLEDs, offset));
+      } else if (effect == PLASMA) {
+        currentEffect = LEDSegmentEffect(new Plasma(LEDs, numLEDs, offset));
       }
     }
     void renderEffect() {

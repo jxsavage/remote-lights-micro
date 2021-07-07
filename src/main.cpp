@@ -55,7 +55,7 @@ BluetoothSerial clientSerial;
 CRGB leds[288];
 #endif
 #ifdef USE_ESP32
-CRGB leds[144];
+CRGB leds[432];
 #endif
 
 CommandParser command;
@@ -79,7 +79,13 @@ void setup() {
   clientSerial.enableSSP();
   // clientSerial.setPin("1234");
   CLEDController *strip1 = &FastLED
-    .addLeds<APA102, 17, 16, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144)
+    .addLeds<APA102, 16, 17, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144)
+    .setCorrection(TypicalSMD5050);
+  CLEDController *strip2 = &FastLED
+    .addLeds<APA102, 18, 19, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144, 144)
+    .setCorrection(TypicalSMD5050);
+  CLEDController *strip3 = &FastLED
+    .addLeds<APA102, 26, 25, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 288, 144)
     .setCorrection(TypicalSMD5050);
   #endif
   

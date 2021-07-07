@@ -30,7 +30,7 @@ struct Settings
   int totalLEDs;
   uint8_t defaultBrightness;
   uint8_t numStrips;
-  FastLEDStripSettings strips[2];
+  FastLEDStripSettings strips[4];
   uint8_t numSegments;
   RemoteLightsSegmentSettings segments[10];
 };
