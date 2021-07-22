@@ -3,7 +3,7 @@
 #include <FastLED.h>
 #include <Effect.h>
 #include <enums.h>
-// #define FORCE_DEFAULT_MEM_RESET
+#define FORCE_DEFAULT_MEM_RESET
 #ifdef USE_TEENSY
 #include <EEPROM.h>
 #endif
@@ -13,45 +13,76 @@
 #define FORMAT_LITTLEFS_IF_FAILED true
 Settings defaultSettings = {
   microId : 0,
-  totalLEDs : 432,
+  totalLEDs : 120,
   defaultBrightness : 20,
-  numStrips : 3,
+  numStrips : 1,
   strips : {
     {
       offset : 0,
-      numLEDs : 144,
+      numLEDs : 60,
     },
     {
-      offset : 144,
-      numLEDs : 144,
+      offset : 60,
+      numLEDs : 60,
     },
-    {
-      offset : 288,
-      numLEDs : 144,
-    }
   },
-  numSegments : 3,
+  numSegments : 2,
   segments : {
     {
       id: 1,
       offset : 0,
-      numLEDs : 144,
+      numLEDs : 60,
       effect : BLENDWAVE
     },
     {
       id: 2,
-      offset : 144,
-      numLEDs : 144,
-      effect : COLORWAVES
+      offset : 60,
+      numLEDs : 60,
+      effect : CONFETTI
     },
-    {
-      id: 3,
-      offset : 288,
-      numLEDs : 144,
-      effect : BLENDWAVE
-    }
   }
 };
+// Settings defaultSettings = {
+//   microId : 0,
+//   totalLEDs : 432,
+//   defaultBrightness : 20,
+//   numStrips : 3,
+//   strips : {
+//     {
+//       offset : 0,
+//       numLEDs : 144,
+//     },
+//     {
+//       offset : 144,
+//       numLEDs : 144,
+//     },
+//     {
+//       offset : 288,
+//       numLEDs : 144,
+//     }
+//   },
+//   numSegments : 3,
+//   segments : {
+//     {
+//       id: 1,
+//       offset : 0,
+//       numLEDs : 144,
+//       effect : BLENDWAVE
+//     },
+//     {
+//       id: 2,
+//       offset : 144,
+//       numLEDs : 144,
+//       effect : COLORWAVES
+//     },
+//     {
+//       id: 3,
+//       offset : 288,
+//       numLEDs : 144,
+//       effect : BLENDWAVE
+//     }
+//   }
+// };
 EEPROMSettings::EEPROMSettings()
 {
   #ifdef FORCE_DEFAULT_MEM_RESET

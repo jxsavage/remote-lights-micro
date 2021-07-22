@@ -55,7 +55,8 @@ BluetoothSerial clientSerial;
 CRGB leds[288];
 #endif
 #ifdef USE_ESP32
-CRGB leds[432];
+// CRGB leds[432];
+CRGB leds[120];
 #endif
 
 CommandParser command;
@@ -77,16 +78,22 @@ void setup() {
   #ifdef USE_ESP32
   clientSerial.begin("Remote_Lights");
   clientSerial.enableSSP();
-  // clientSerial.setPin("1234");
+  clientSerial.setPin("1234");
   CLEDController *strip1 = &FastLED
-    .addLeds<APA102, 16, 17, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144)
+    .addLeds<WS2813, 19, BGR>(leds, 60)
     .setCorrection(TypicalSMD5050);
   CLEDController *strip2 = &FastLED
-    .addLeds<APA102, 18, 19, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144, 144)
+    .addLeds<WS2813, 18, BGR>(leds, 60, 60)
     .setCorrection(TypicalSMD5050);
-  CLEDController *strip3 = &FastLED
-    .addLeds<APA102, 26, 25, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 288, 144)
-    .setCorrection(TypicalSMD5050);
+  // CLEDController *strip1 = &FastLED
+  //   .addLeds<APA102, 16, 17, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144)
+  //   .setCorrection(TypicalSMD5050);
+  // CLEDController *strip2 = &FastLED
+  //   .addLeds<APA102, 18, 19, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144, 144)
+  //   .setCorrection(TypicalSMD5050);
+  // CLEDController *strip3 = &FastLED
+  //   .addLeds<APA102, 26, 25, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 288, 144)
+  //   .setCorrection(TypicalSMD5050);
   #endif
   
   #ifdef USE_TEENSY
