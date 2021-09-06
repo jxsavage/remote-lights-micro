@@ -79,12 +79,12 @@ void setup() {
   clientSerial.begin("Remote_Lights");
   clientSerial.enableSSP();
   clientSerial.setPin("1234");
-  CLEDController *strip1 = &FastLED
-    .addLeds<WS2813, 19, BGR>(leds, 60)
-    .setCorrection(TypicalSMD5050);
-  CLEDController *strip2 = &FastLED
-    .addLeds<WS2813, 18, BGR>(leds, 60, 60)
-    .setCorrection(TypicalSMD5050);
+  // CLEDController *strip1 = &FastLED
+  //   .addLeds<WS2813, 19, BGR>(leds, 60)
+  //   .setCorrection(TypicalSMD5050);
+  // CLEDController *strip2 = &FastLED
+  //   .addLeds<WS2813, 18, BGR>(leds, 60, 60)
+  //   .setCorrection(TypicalSMD5050);
   // CLEDController *strip1 = &FastLED
   //   .addLeds<APA102, 16, 17, GBR, DATA_RATE_MHZ(DATA_RATE)>(leds, 144)
   //   .setCorrection(TypicalSMD5050);

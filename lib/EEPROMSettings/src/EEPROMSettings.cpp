@@ -3,7 +3,7 @@
 #include <FastLED.h>
 #include <Effect.h>
 #include <enums.h>
-#define FORCE_DEFAULT_MEM_RESET
+// #define FORCE_DEFAULT_MEM_RESET
 #ifdef USE_TEENSY
 #include <EEPROM.h>
 #endif
